@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0",
+  "name": "openstack-wrapper",
+  "description": "A simple js wrapper for the Openstack APIs",
+  "author": {
+    "name": "Jason Robinson",
+    "email": "jerobinson@godaddy.com"
+  },
+  "license": "MIT",
+  "homepage": "http://github.secureserver.net/cloudplatform/openstack-wrapper",
+  "bugs": {
+    "url": "http://github.secureserver.net/cloudplatform/openstack-wrapper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.secureserver.net/cloudplatform/openstack-wrapper.git"
+  },
+  "dependencies": {
+    "request": "~2",
+  },
+  "devDependencies": {
+    "nodeunit": "~0.9"
+  },
+  "main": "./index.js",
+  "readme": "put readme stuff here", 
+  "readmeFilename": "README.md",
+}
+
