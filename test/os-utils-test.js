@@ -1,8 +1,4 @@
-var AppSettings = require('appsettings');
 var utils = require('../lib/os-utils.js');
-
-//change the logger default so that the output won't get spammed with debug/trace stuff
-require('gd-logger').LoggerFactory.setDefaultLevel('WARN');
 
 
 //various tests for isError()

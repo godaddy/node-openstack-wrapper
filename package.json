@@ -23,6 +23,9 @@
   },
   "main": "./index.js",
   "readme": "put readme stuff here", 
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "scripts": {
+    "test":  "./node_modules/nodeunit/bin/nodeunit ./test"
+  }
 }
 
