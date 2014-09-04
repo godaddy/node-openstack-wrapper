@@ -1,5 +1,5 @@
 var Glance = require('../lib/glance.js');
-var glance = new Glance('http://meh', 'faketoken');
+var glance = new Glance('http://mock_glance_url', 'mock_token');
 
 
 //returns a mock request object for dependency injection with get/post/patch/del methods calling back with the given 3 values
@@ -11,7 +11,7 @@ function getMockRequest(return_error, return_status_code, return_response)
   }
   
   var return_object = {
-    get:mockVerb,
+    get: mockVerb,
     post: mockVerb,
     patch: mockVerb,
     put: mockVerb,
@@ -23,20 +23,62 @@ function getMockRequest(return_error, return_status_code, return_response)
 
 
 
-//various tests for glance.list()
-exports.list = {
-  setUp: function(callback){
-    callback();
+exports.getRequestOptions = {
+  setUp: function(cb){
+    cb();
   },
+  
+  
+  confirmResult: function(test){
+    var result = glance.getRequestOptions('/mock_path', {meh: 'meh'}, {extra_header: 'extra_header_value'});
+    var expected_result = {
+      uri: 'http://mock_glance_url/mock_path',
+      headers:{'X-Auth-Token': 'mock_token', extra_header: 'extra_header_value'},
+      json: {meh: 'meh'},
+      timeout: 9000
+    };
+    
+    test.deepEqual(result, expected_result, 'result should be ' + JSON.stringify(expected_result));
+    test.done();
+  }
+};
+
+
+
+exports.listImages = {
+  setUp: function(cb){
+    this.valid_response_body = {links: {self: 'selfurl', previous: null, next: null}, images: []};
+    this.valid_result = [];
+    this.valid_result.self = 'selfurl';
+    this.valid_result.previous = null;
+    this.valid_result.next = null;
+    
+    cb();
+  },
+  
+  
+  confirmImagesOnSuccess: function(test)
+  {
+    //stub out request with a completely valid response
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    glance.setRequest(mock_request);
+    
+    glance.listImages(function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.done();
+    });
+  },
+  
   
   confirmErrorOnInvalidJSONBody: function(test)
   {
-    //stub out the request for an 200 response with junk json in the body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out the request for a 200 response with an invalid json body
+    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     glance.setRequest(mock_request);
     
-    glance.list(function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.listImages(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -44,25 +86,25 @@ exports.list = {
   
   confirmErrorOnInvalidStringBody: function(test)
   {
-    //stub out the request for an 200 response with junk text in the body
+    //stub out the request for a 200 response with junk text in the body
     var mock_request = getMockRequest(null, 200, 'meh');
     glance.setRequest(mock_request);
     
-    glance.list(function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.listImages(function(error, access_token){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
   
   
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnInvalidStatus: function(test)
   {
-    //stub out request for an automagic 500 with junk text in the body
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    //stub out request for an invalid status but an otherwise valid body (to ensure error on invalid status)
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
     glance.setRequest(mock_request);
     
-    glance.list(function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.listImages(function(error, access_token){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -70,16 +112,37 @@ exports.list = {
 
 
 
-//various tests for glance.get
-exports.get = {
-  confirmErrorOnInvalidJSONBody: function(test)
+exports.getImage = {
+  setUp: function(cb){
+    this.valid_response_body = {id: 'mock_id'};
+    this.valid_result = {id: 'mock_id'};
+    
+    cb();
+  },
+  
+  
+  confirmImageOnSuccess: function(test)
   {
-    //stub out the request for an 200 response with junk json in the body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out the request for a completely valid response
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
     glance.setRequest(mock_request);
     
-    glance.get('mock-id', function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.getImage('mock_id', function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.done();
+    });
+  },
+  
+  
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out the request for a 200 with an invalid json body
+    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
+    glance.setRequest(mock_request);
+    
+    glance.getImage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -91,8 +154,8 @@ exports.get = {
     var mock_request = getMockRequest(null, 200, 'meh');
     glance.setRequest(mock_request);
     
-    glance.get('mock-id', function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.getImage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -100,54 +163,12 @@ exports.get = {
   
   confirmErrorOnNon200: function(test)
   {
-    //stub out request for an automagic 500 with junk text in the body
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    //stub out request for an invalid status with valid json body (to test the status triggers an error)
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
     glance.setRequest(mock_request);
     
-    glance.get('mock-id', function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  }
-};
-
-
-//various tests for glance.queue
-exports.queue = {
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for an 200 response with junk json in the body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    glance.setRequest(mock_request);
-    
-    glance.queue({}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-  
-  
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for an 200 response with junk text in the body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    glance.setRequest(mock_request);
-    
-    glance.queue({}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-  
-  
-  confirmErrorOnNon200: function(test)
-  {
-    //stub out request for an automagic 500 with junk text in the body
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    glance.setRequest(mock_request);
-    
-    glance.queue({}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.getImage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error');
       test.done();
     });
   }
@@ -155,16 +176,37 @@ exports.queue = {
 
 
 
-//various tests for glance.update
-exports.update = {
+exports.queueImage = {
+  setUp: function(cb){
+    this.valid_response_body = {id: 'mock_id'};
+    this.valid_result = {id: 'mock_id'};
+    
+    cb();
+  },
+  
+  
+  confirmImageOnSuccess: function(test)
+  {
+    //stub out the request for a completely valid response
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    glance.setRequest(mock_request);
+    
+    glance.queueImage({}, function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.done();
+    });
+  },
+  
+  
   confirmErrorOnInvalidJSONBody: function(test)
   {
-    //stub out the request for an 200 response with junk json in the body
+    //stub out the request for a 200 response with junk json in the body
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     glance.setRequest(mock_request);
     
-    glance.update('mock-id', {}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.queueImage({}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -172,25 +214,25 @@ exports.update = {
   
   confirmErrorOnInvalidStringBody: function(test)
   {
-    //stub out the request for an 200 response with junk text in the body
+    //stub out the request for a 200 response with junk text in the body
     var mock_request = getMockRequest(null, 200, 'meh');
     glance.setRequest(mock_request);
     
-    glance.update('mock-id', {}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.queueImage({}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
   
   
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnInvalidStatus: function(test)
   {
-    //stub out request for an automagic 500 with junk text in the body
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    //stub out request for an invalid status with valid json body (to test the status triggers an error)
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
     glance.setRequest(mock_request);
     
-    glance.update('mock-id', {}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.queueImage({}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -198,16 +240,96 @@ exports.update = {
 
 
 
-//various tests for glance.remove
-exports.remove = {
+//skipping uploadImage - not sure this is unit-testable in the normal fashion
+
+
+
+exports.updateImage = {
+    setUp: function(cb){
+    this.valid_response_body = {id: 'mock_id'};
+    this.valid_result = {id: 'mock_id'};
+    
+    cb();
+  },
+  
+  
+  confirmImageOnSuccess: function(test)
+  {
+    //stub out request with a completely valid response
+    var mock_request = getMockRequest(null, 200, {});
+    glance.setRequest(mock_request);
+    
+    glance.updateImage('mock_id', {}, function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.done();
+    });
+  },
+  
+  
   confirmErrorOnInvalidJSONBody: function(test)
   {
-    //stub out the request for an 200 response with junk json in the body
+    //stub out the request for a 200 response with junk json in the body
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     glance.setRequest(mock_request);
     
-    glance.remove('mock-id', function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.updateImage('mock_id', {}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+  
+  
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out the request for a 200 response with junk text in the body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    glance.setRequest(mock_request);
+    
+    glance.updateImage('mock_id', {}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+  
+  
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    //stub out request for a 500 with valid json in the body (to ensure the status triggers an error)
+    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    glance.setRequest(mock_request);
+    
+    glance.updateImage('mock_id', {}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+
+exports.removeImage = {
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out request with a completely valid response
+    var mock_request = getMockRequest(null, 200, {});
+    glance.setRequest(mock_request);
+    
+    glance.removeImage('mock_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.done();
+    });
+  },
+
+  
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out the request for a 200 response with junk json in the body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    glance.setRequest(mock_request);
+    
+    glance.removeImage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -219,21 +341,21 @@ exports.remove = {
     var mock_request = getMockRequest(null, 200, 'meh');
     glance.setRequest(mock_request);
     
-    glance.remove('mock-id', function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.removeImage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
   
   
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnInvalidStatus: function(test)
   {
-    //stub out request for an automagic 500 with junk text in the body
+    //stub out request for a 500 with valid json in the body (to ensure the status triggers an error)
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     glance.setRequest(mock_request);
     
-    glance.remove('moc-id', function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    glance.removeImage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }

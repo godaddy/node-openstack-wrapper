@@ -34,9 +34,9 @@ exports.listInstances = {
     var mock_request = getMockRequest(null, 200, {servers:[{status: 'ACTIVE'}]});
     nova.setRequest(mock_request);
     
-    nova.listInstances(function(error, server_array){
+    nova.listInstances(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(server_array[0].status, 'ACTIVE', 'value should be "ACTIVE"');
+      test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
       test.done();
     });
   },
@@ -46,7 +46,7 @@ exports.listInstances = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listInstances(function(error, server_array){
+    nova.listInstances(function(error, result){
       test.ok(error, 'There should be an error object');
       test.done();
     });
@@ -57,7 +57,7 @@ exports.listInstances = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listInstances(function(error, server_array){
+    nova.listInstances(function(error, result){
       test.ok(error, 'There should be an error object');
       test.done();
     });
@@ -68,8 +68,8 @@ exports.listInstances = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.listInstances(function(error, server_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listInstances(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -85,9 +85,9 @@ exports.instance_get = {
     var mock_request = getMockRequest(null, 200, {server:{status: 'ACTIVE'}});
     nova.setRequest(mock_request);
     
-    nova.getInstance('mock-id', function(error, server_object){
+    nova.getInstance('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(server_object.status, 'ACTIVE', 'value should be "ACTIVE"');
+      test.equal(result.status, 'ACTIVE', 'value should be "ACTIVE"');
       test.done();
     });
   },
@@ -97,8 +97,8 @@ exports.instance_get = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.getInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -108,8 +108,8 @@ exports.instance_get = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.getInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -119,8 +119,8 @@ exports.instance_get = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -135,9 +135,9 @@ exports.createInstance = {
     var mock_request = getMockRequest(null, 200, {server:{status: 'ACTIVE'}});
     nova.setRequest(mock_request);
     
-    nova.createInstance('mock-id', function(error, server_object){
+    nova.createInstance('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(server_object.status, 'ACTIVE', 'value should be "ACTIVE"');
+      test.equal(result.status, 'ACTIVE', 'value should be "ACTIVE"');
       test.done();
     });
   },
@@ -147,8 +147,8 @@ exports.createInstance = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.createInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -158,8 +158,8 @@ exports.createInstance = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.createInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -169,8 +169,8 @@ exports.createInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.createInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -184,8 +184,8 @@ exports.renameInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.renameInstance('mock-id', 'mock-name', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.renameInstance('mock_id', 'mock_name', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -200,8 +200,8 @@ exports.resizeInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.resizeInstance('mock-id', 'mock-name', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.resizeInstance('mock_id', 'mock_name', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -215,8 +215,8 @@ exports.confirmResizeInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.confirmResizeInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.confirmResizeInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -230,8 +230,8 @@ exports.revertResizeInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.revertResizeInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.revertResizeInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -245,8 +245,8 @@ exports.removeInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.removeInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.removeInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -260,8 +260,8 @@ exports.rebootInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.rebootInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.rebootInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -275,8 +275,8 @@ exports.forceRebootInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.rebootInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.rebootInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -290,8 +290,8 @@ exports.stopInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.stopInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.stopInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -305,8 +305,8 @@ exports.startInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.startInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.startInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -320,7 +320,7 @@ exports.pauseInstance = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.pauseInstance('mock-id', function(error, return_value){
+    nova.pauseInstance('mock_id', function(error, return_value){
       test.ifError(error, 'There should be no error');
       test.equal(return_value, true, 'value should be boolean true');
       test.done();
@@ -332,8 +332,8 @@ exports.pauseInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.pauseInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.pauseInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -347,7 +347,7 @@ exports.suspendInstance = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.suspendInstance('mock-id', function(error, return_value){
+    nova.suspendInstance('mock_id', function(error, return_value){
       test.ifError(error, 'There should be no error');
       test.equal(return_value, true, 'value should be boolean true');
       test.done();
@@ -359,8 +359,8 @@ exports.suspendInstance = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.suspendInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.suspendInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -383,7 +383,7 @@ exports.resumeInstance = {
     };
     nova.setRequest(mock_request);
     
-    nova.resumeInstance('mock-id', function(error, return_value){
+    nova.resumeInstance('mock_id', function(error, return_value){
       test.ifError(error, 'There should be no error');
       test.equal(return_value, true, 'value should be boolean true');
       test.done();
@@ -396,8 +396,8 @@ exports.resumeInstance = {
     var mock_request = getMockRequest(null, 200, {server: {status: 'notpausedorsuspended'}});
     nova.setRequest(mock_request);
     
-    nova.resumeInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.resumeInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -417,8 +417,8 @@ exports.resumeInstance = {
     };
     nova.setRequest(mock_request);
     
-    nova.resumeInstance('mock-id', function(error, server_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.resumeInstance('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -426,15 +426,15 @@ exports.resumeInstance = {
 
 
 
-exports.getInstanceConsoleUrlinstance_consoleUrl = {
+exports.getInstanceConsoleUrl = {
   confirmURLOnSuccess: function(test)
   {
     var mock_request = getMockRequest(null, 200, {console: {url: 'http://something'}});
     nova.setRequest(mock_request);
     
-    nova.getInstanceConsoleUrl('mock-type', 'mock-id', function(error, url){
+    nova.getInstanceConsoleUrl('mock-type', 'mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(url, 'http://something', 'value should be boolean "http://something"');
+      test.equal(result, 'http://something', 'value should be boolean "http://something"');
       test.done();
     });
   },
@@ -444,8 +444,8 @@ exports.getInstanceConsoleUrlinstance_consoleUrl = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.getInstanceConsoleUrl('mock-type', 'mock-id', function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstanceConsoleUrl('mock-type', 'mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -455,8 +455,8 @@ exports.getInstanceConsoleUrlinstance_consoleUrl = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.getInstanceConsoleUrl('mock-type', 'mock-id', function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstanceConsoleUrl('mock-type', 'mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -466,8 +466,8 @@ exports.getInstanceConsoleUrlinstance_consoleUrl = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getInstanceConsoleUrl('mock-type', 'mock-id', function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstanceConsoleUrl('mock-type', 'mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -481,8 +481,8 @@ exports.getInstanceLog = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.getInstanceLog('mock-id', 50, function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstanceLog('mock_id', 50, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -492,8 +492,8 @@ exports.getInstanceLog = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.getInstanceLog('mock-id', 50, function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstanceLog('mock_id', 50, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -503,8 +503,8 @@ exports.getInstanceLog = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getInstanceLog('mock-id', 50, function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getInstanceLog('mock_id', 50, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -522,9 +522,9 @@ exports.createImage = {
     };
     nova.setRequest(mock_request);
     
-    nova.createImage('mock-id', {meh: 'meh'}, function(error, response){
+    nova.createImage('mock_id', {meh: 'meh'}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual({result: 'result', ImageId: 'image_id'}, response, 'value should be {result: "result", ImageId: "image_id"}');
+      test.deepEqual({result: 'result', ImageId: 'image_id'}, result, 'value should be {result: "result", ImageId: "image_id"}');
       test.done();
     });
   },
@@ -534,8 +534,8 @@ exports.createImage = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.createImage('mock-id', {meh: 'meh'}, function(error, response){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createImage('mock_id', {meh: 'meh'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -549,9 +549,9 @@ exports.setInstanceMetadata = {
     var mock_request = getMockRequest(null, 200, {x:'x'});
     nova.setRequest(mock_request);
     
-    nova.setInstanceMetadata('mock-id', {meh: 'meh'}, function(error, response){
+    nova.setInstanceMetadata('mock_id', {meh: 'meh'}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual({x:'x'}, response, 'value should be {x: "x"}');
+      test.deepEqual({x:'x'}, result, 'value should be {x: "x"}');
       test.done();
     });
   },
@@ -561,8 +561,8 @@ exports.setInstanceMetadata = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.setInstanceMetadata('mock-id', {meh: 'meh'}, function(error, url){
-      test.ok(error, 'We should receive an error object or string');
+    nova.setInstanceMetadata('mock_id', {meh: 'meh'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -576,8 +576,8 @@ exports.listFlavors = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listFlavors(function(error, flavor_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listFlavors(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -587,8 +587,8 @@ exports.listFlavors = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listFlavors(function(error, flavor_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listFlavors(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -598,8 +598,8 @@ exports.listFlavors = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.listFlavors(function(error, flavor_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listFlavors(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -613,7 +613,7 @@ exports.getFlavor = {
     nova.setRequest(mock_request);
     
     nova.getFlavor("id", function(error, result){
-      test.ok(error, 'We should receive an error object or string');
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -624,7 +624,7 @@ exports.getFlavor = {
     nova.setRequest(mock_request);
     
     nova.getFlavor("id", function(error, result){
-      test.ok(error, 'We should receive an error object or string');
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -635,7 +635,7 @@ exports.getFlavor = {
     nova.setRequest(mock_request);
     
     nova.getFlavor("id", function(error, result){
-      test.ok(error, 'We should receive an error object or string');
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -649,9 +649,9 @@ exports.floatinglistFloatingIpsip_list = {
     var mock_request = getMockRequest(null, 200, {floating_ips:[{status: 'ACTIVE'}]});
     nova.setRequest(mock_request);
     
-    nova.listFloatingIps(function(error, ip_array){
+    nova.listFloatingIps(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(ip_array[0].status, 'ACTIVE', 'value should be "ACTIVE"');
+      test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
       test.done();
     });
   },
@@ -661,10 +661,10 @@ exports.floatinglistFloatingIpsip_list = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listFloatingIps(function(error, ip_array){
+    nova.listFloatingIps(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(ip_array), true, 'value should be an array');
-      test.equal(ip_array.length, 0, 'value should be an empty array');
+      test.equal(util.isArray(result), true, 'value should be an array');
+      test.equal(result.length, 0, 'value should be an empty array');
       test.done();
     });
   },
@@ -674,10 +674,10 @@ exports.floatinglistFloatingIpsip_list = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listFloatingIps(function(error, ip_array){
+    nova.listFloatingIps(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(ip_array), true, 'value should be an array');
-      test.equal(ip_array.length, 0, 'value should be an empty array');
+      test.equal(util.isArray(result), true, 'value should be an array');
+      test.equal(result.length, 0, 'value should be an empty array');
       test.done();
     });
   },
@@ -687,8 +687,8 @@ exports.floatinglistFloatingIpsip_list = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.listFloatingIps(function(error, ip_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listFloatingIps(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -702,9 +702,9 @@ exports.getFloatingIp = {
     var mock_request = getMockRequest(null, 200, {floating_ip: {meh: 'meh'}});
     nova.setRequest(mock_request);
     
-    nova.getFloatingIp('mock-id', function(error, ip_object){
+    nova.getFloatingIp('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(ip_object, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
+      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -714,8 +714,8 @@ exports.getFloatingIp = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.getFloatingIp("id", function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getFloatingIp("id", function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -725,8 +725,8 @@ exports.getFloatingIp = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.getFloatingIp("id", function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getFloatingIp("id", function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -736,8 +736,8 @@ exports.getFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getFloatingIp("id", function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getFloatingIp("id", function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -751,8 +751,8 @@ exports.createFloatingIp = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.createFloatingIp({}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createFloatingIp({}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -762,8 +762,8 @@ exports.createFloatingIp = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.createFloatingIp({}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createFloatingIp({}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -773,8 +773,8 @@ exports.createFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.createFloatingIp({}, function(error, access_token){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createFloatingIp({}, function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -788,9 +788,9 @@ exports.removeFloatingIp = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.removeFloatingIp('mock-id', function(error, result_object){
+    nova.removeFloatingIp('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result_object, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
+      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -801,8 +801,8 @@ exports.removeFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.removeFloatingIp("id", function(error, result_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.removeFloatingIp("id", function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -816,9 +816,9 @@ exports.associateFloatingIp = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
 
-    nova.associateFloatingIp('mock-id', 'mock-address', function(error, result_object){
+    nova.associateFloatingIp('mock_id', 'mock-address', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result_object, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
+      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -829,8 +829,8 @@ exports.associateFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.associateFloatingIp("mock-id", 'mock-address', function(error, result_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.associateFloatingIp("mock_id", 'mock-address', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -844,9 +844,9 @@ exports.disassociateFloatingIp = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.disassociateFloatingIp('mock-id', 'mock-address', function(error, result_object){
+    nova.disassociateFloatingIp('mock_id', 'mock-address', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result_object, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
+      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -857,8 +857,8 @@ exports.disassociateFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.disassociateFloatingIp("mock-id", 'mock-address', function(error, result_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.disassociateFloatingIp("mock_id", 'mock-address', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -872,9 +872,9 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 200, {floating_ip_pools:[{name: 'testid'}]});
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, pool_array){
+    nova.listIpPools(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(pool_array[0].id, 'testid', 'value should be "testid"');
+      test.equal(result[0].id, 'testid', 'value should be "testid"');
       test.done();
     });
   },
@@ -885,10 +885,10 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, pool_array){
+    nova.listIpPools(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(pool_array), true, 'value should be an array');
-      test.equal(pool_array.length, 0, 'value should be an empty array');
+      test.equal(util.isArray(result), true, 'value should be an array');
+      test.equal(result.length, 0, 'value should be an empty array');
       test.done();
     });
   },
@@ -899,10 +899,10 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, pool_array){
+    nova.listIpPools(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(pool_array), true, 'value should be an array');
-      test.equal(pool_array.length, 0, 'value should be an empty array');
+      test.equal(util.isArray(result), true, 'value should be an array');
+      test.equal(result.length, 0, 'value should be an empty array');
       test.done();
     });
   },
@@ -913,8 +913,8 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, pool_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listIpPools(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -928,9 +928,9 @@ exports.getIpPool = {
     var mock_request = getMockRequest(null, 200, {floating_ip_pools:[{name: 'testid'}]});
     nova.setRequest(mock_request);
     
-    nova.getIpPool('testid', function(error, ip_object){
+    nova.getIpPool('testid', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(ip_object, {id: 'testid'}, 'value should be an object {id: "testid"}');
+      test.deepEqual(result, {id: 'testid'}, 'value should be an object {id: "testid"}');
       test.done();
     });
   },
@@ -940,8 +940,8 @@ exports.getIpPool = {
     var mock_request = getMockRequest(null, 200, {floating_ip_pools:[{name: 'testid'}]});
     nova.setRequest(mock_request);
     
-    nova.getIpPool("not-testid", function(error, ip_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getIpPool("not-testid", function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -958,9 +958,9 @@ exports.listZones = {
     var mock_request = getMockRequest(null, 200, response_object);
     nova.setRequest(mock_request);
     
-    nova.listZones(function(error, zone_array){
+    nova.listZones(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(test_array, zone_array, 'value should match object: ' + JSON.stringify(test_array));
+      test.deepEqual(test_array, result, 'value should match object: ' + JSON.stringify(test_array));
       test.done();
     });
   },
@@ -970,8 +970,8 @@ exports.listZones = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listZones(function(error, zone_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listZones(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -981,8 +981,8 @@ exports.listZones = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listZones(function(error, zone_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listZones(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -993,8 +993,8 @@ exports.listZones = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.listZones(function(error, zone_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listZones(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1010,9 +1010,9 @@ exports.getZone = {
     var mock_request = getMockRequest(null, 200, response_object);
     nova.setRequest(mock_request);
     
-    nova.getZone('testname', function(error, zone_object){
+    nova.getZone('testname', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(zone_object, test_object, 'value should be an object: ' + JSON.stringify(test_object));
+      test.deepEqual(result, test_object, 'value should be an object: ' + JSON.stringify(test_object));
       test.done();
     });
   },
@@ -1023,8 +1023,8 @@ exports.getZone = {
     var mock_request = getMockRequest(null, 200, response_object);
     nova.setRequest(mock_request);
     
-    nova.getZone("not-testname", function(error, zone_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getZone("not-testname", function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1041,9 +1041,9 @@ exports.listSSHKeys = {
     var mock_request = getMockRequest(null, 200, response_object);
     nova.setRequest(mock_request);
     
-    nova.listSSHKeys(function(error, key_array){
+    nova.listSSHKeys(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(test_array, key_array, 'value should match object: ' + JSON.stringify(test_array));
+      test.deepEqual(test_array, result, 'value should match object: ' + JSON.stringify(test_array));
       test.done();
     });
   },
@@ -1053,9 +1053,9 @@ exports.listSSHKeys = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listSSHKeys(function(error, key_array){
+    nova.listSSHKeys(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(key_array, [], 'value should be a blank array');
+      test.deepEqual(result, [], 'value should be a blank array');
       test.done();
     });
   },
@@ -1065,9 +1065,9 @@ exports.listSSHKeys = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listSSHKeys(function(error, key_array){
+    nova.listSSHKeys(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(key_array, [], 'value should be a blank array');
+      test.deepEqual(result, [], 'value should be a blank array');
       test.done();
     });
   },
@@ -1078,8 +1078,8 @@ exports.listSSHKeys = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.listSSHKeys(function(error, key_array){
-      test.ok(error, 'We should receive an error object or string');
+    nova.listSSHKeys(function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1093,9 +1093,9 @@ exports.getSSHKey = {
     var mock_request = getMockRequest(null, 200, {keypair: {meh: 'meh'}});
     nova.setRequest(mock_request);
     
-    nova.getSSHKey('mock-id', function(error, key_object){
+    nova.getSSHKey('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(key_object, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
+      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -1105,8 +1105,8 @@ exports.getSSHKey = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.getSSHKey('mock-id', function(error, key_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getSSHKey('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -1116,8 +1116,8 @@ exports.getSSHKey = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.getSSHKey('mock-id', function(error, key_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getSSHKey('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -1127,8 +1127,8 @@ exports.getSSHKey = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getSSHKey('mock-id', function(error, key_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getSSHKey('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1142,9 +1142,9 @@ exports.createSSHKey = {
     var mock_request = getMockRequest(null, 200, {keypair: {meh: 'meh'}});
     nova.setRequest(mock_request);
     
-    nova.createSSHKey('mock-name', 'mock-key', function(error, key_object){
+    nova.createSSHKey('mock_name', 'mock-key', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(key_object, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
+      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -1154,8 +1154,8 @@ exports.createSSHKey = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.createSSHKey('mock-name', 'mock-key', function(error, key_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createSSHKey('mock_name', 'mock-key', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -1165,8 +1165,8 @@ exports.createSSHKey = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.createSSHKey('mock-name', 'mock-key', function(error, key_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createSSHKey('mock_name', 'mock-key', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -1176,8 +1176,8 @@ exports.createSSHKey = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.createSSHKey('mock-name', 'mock-key', function(error, key_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.createSSHKey('mock_name', 'mock-key', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1191,7 +1191,7 @@ exports.removeSSHKey = {
     var mock_request = getMockRequest(null, 200, {keypair: {meh: 'meh'}});
     nova.setRequest(mock_request);
     
-    nova.removeSSHKey('mock-id', function(error, result){
+    nova.removeSSHKey('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
       //I think thats all we can test for...
       test.done();
@@ -1203,8 +1203,8 @@ exports.removeSSHKey = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.removeSSHKey('mock-id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
+    nova.removeSSHKey('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1218,9 +1218,9 @@ exports.getQuota = {
     var mock_request = getMockRequest(null, 200, {quota_set: {ram: 16384}});
     nova.setRequest(mock_request);
     
-    nova.getQuota('mock-id', function(error, quota_object){
+    nova.getQuota('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(quota_object, {ram_mb: 16384}, 'value should be an object {ram_mb: 16384}');
+      test.deepEqual(result, {ram_mb: 16384}, 'value should be an object {ram_mb: 16384}');
       test.done();
     });
   },
@@ -1230,8 +1230,8 @@ exports.getQuota = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.getQuota('mock-id', function(error, quota_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getQuota('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -1241,8 +1241,8 @@ exports.getQuota = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.getQuota('mock-id', function(error, quota_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getQuota('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   },
@@ -1252,8 +1252,8 @@ exports.getQuota = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getQuota('mock-id', function(error, quota_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getQuota('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1275,9 +1275,9 @@ exports.getUsage = {
     var mock_request = getMockRequest(null, 200, mock_data);
     nova.setRequest(mock_request);
     
-    nova.getUsage('mock-id', function(error, usage_object){
+    nova.getUsage('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(usage_object, test_object, 'value should be an object: ' +  JSON.stringify(test_object));
+      test.deepEqual(result, test_object, 'value should be an object: ' +  JSON.stringify(test_object));
       test.done();
     });
   },
@@ -1287,8 +1287,8 @@ exports.getUsage = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.getUsage('mock-id', function(error, usage_object){
-      test.ok(error, 'We should receive an error object or string');
+    nova.getUsage('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1302,7 +1302,7 @@ exports.assignSecurityGroup = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.assignSecurityGroup('mock-name', 'mock-id', function(error, response){
+    nova.assignSecurityGroup('mock_name', 'mock_id', function(error, response){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -1313,8 +1313,8 @@ exports.assignSecurityGroup = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.assignSecurityGroup('mock-name', 'mock-id', function(error, response){
-      test.ok(error, 'We should receive an error object or string');
+    nova.assignSecurityGroup('mock_name', 'mock_id', function(error, response){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
@@ -1328,7 +1328,7 @@ exports.removeSecurityGroup = {
     var mock_request = getMockRequest(null, 200, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.removeSecurityGroup('mock-name', 'mock-id', function(error, response){
+    nova.removeSecurityGroup('mock_name', 'mock_id', function(error, response){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -1339,8 +1339,8 @@ exports.removeSecurityGroup = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
     
-    nova.removeSecurityGroup('mock-name', 'mock-id', function(error, response){
-      test.ok(error, 'We should receive an error object or string');
+    nova.removeSecurityGroup('mock_name', 'mock_id', function(error, response){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
