@@ -58,12 +58,13 @@ exports.getToken = {
   confirmTokenOnSuccess: function(test)
   {
     //stub out the request for a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_headers, this.valid_response_body);
     keystone.setRequest(mock_request);
     
     keystone.getToken('username', 'password', function(error, result){
       test.ifError(error, 'There should be no error')
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -124,12 +125,13 @@ exports.getProjectToken = {
   confirmTokenOnSuccess: function(test)
   {
     //stub out the request for a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_headers, this.valid_response_body);
     keystone.setRequest(mock_request);
     
-    keystone.getToken('access_token', 'project_id', function(error, result){
+    keystone.getProjectToken('access_token', 'project_id', function(error, result){
       test.ifError(error, 'There should be no error')
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -141,7 +143,7 @@ exports.getProjectToken = {
     var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
     
-    keystone.getProjectInfo("access_token", "project_id", function(error, project_info){
+    keystone.getProjectToken("access_token", "project_id", function(error, project_info){
       test.ok(error, "We should receive an error object");
       test.done();
     });
@@ -154,7 +156,7 @@ exports.getProjectToken = {
     var mock_request = getMockRequest(null, 200, this.valid_response_headers, {meh:'meh'});
     keystone.setRequest(mock_request);
     
-    keystone.getProjectInfo("access_token", "project_id", function(error, project_info){
+    keystone.getProjectToken("access_token", "project_id", function(error, project_info){
       test.ok(error, "We should receive an error object");
       test.done();
     });
@@ -180,7 +182,7 @@ exports.getProjectToken = {
     var mock_request = getMockRequest(null, 500, this.valid_response_headers, this.valid_response_body);
     keystone.setRequest(mock_request);
     
-    keystone.getProjectInfo("access_token", "project_id", function(error, project_info){
+    keystone.getProjectToken("access_token", "project_id", function(error, project_info){
       test.ok(error, "We should receive an error object or string");
       test.done();
     });
@@ -205,12 +207,13 @@ exports.listProjects = {
   confirmProjectsOnSuccess: function(test)
   {
     //stub out request with a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
     
     keystone.listProjects('username', 'accesstoken', function(error, result){
       test.ifError(error, 'There should be no error')
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -273,12 +276,13 @@ exports.listRoles = {
   confirmRolesOnSuccess: function(test)
   {
     //stub out request with a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
     
     keystone.listRoles('access_token', function(error, result){
       test.ifError(error, 'There should be no error')
-      test.DeepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -341,12 +345,13 @@ exports.listRoleAssignments = {
   confirmAssignmentsArrayOnSuccess: function(test)
   {
     //inject request to give a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
     
     keystone.listRoleAssignments('access_token', 'project_id', function(error, result){
       test.ifError(error, 'There should be no error')
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -394,8 +399,8 @@ exports.listRoleAssignments = {
 
 
 exports.addRoleAssignment = {
-  setUp: function(callback){
-    callback();
+  setUp: function(cb){
+    cb();
   },
   
   
@@ -428,8 +433,8 @@ exports.addRoleAssignment = {
 
 
 exports.removeRoleAssignment = {
-  setUp: function(callback){
-    callback();
+  setUp: function(cb){
+    cb();
   },
   
   

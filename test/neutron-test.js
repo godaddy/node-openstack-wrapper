@@ -57,12 +57,13 @@ exports.listSecurityGroups = {
   confirmSecurityGroupsOnSuccess: function(test)
   {
     //stub out a request obj with a completely valid response
-    var mock_request = getMockRequest(null, 200, {security_groups: [{meh: 'meh'}]});
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
     neutron.listSecurityGroups('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -121,12 +122,13 @@ exports.getSecurityGroup = {
   confirmSecurityGroupOnSuccess: function(test)
   {
     //stub out a request obj with a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
     neutron.getSecurityGroup('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -181,12 +183,13 @@ exports.createSecurityGroup = {
   confirmSecurityGroupOnSuccess: function(test)
   {
     //stub out a request obj with a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
     neutron.createSecurityGroup('mock_name', 'mock_description', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -241,12 +244,13 @@ exports.updateSecurityGroup = {
   confirmSecurityGroupOnSuccess: function(test)
   {
     //stub out a request obj with a completely valid response
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
     neutron.updateSecurityGroup('mock_id', {}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -333,12 +337,13 @@ exports.listSecurityGroupRules = {
   confirmSecurityGroupRulesOnSuccess: function(test)
   {
     //stub out a completely valid request
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
     neutron.listSecurityGroupRules(function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -386,7 +391,7 @@ exports.listSecurityGroupRules = {
 
 
 
-exports.getSecurityRule = {
+exports.getSecurityGroupRule = {
   setUp: function(cb){
     this.valid_response_body = {security_group_rule: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -397,12 +402,13 @@ exports.getSecurityRule = {
   confirmSecurityGroupRuleOnSuccess: function(test)
   {
     //stub out a completely valid request
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
-    neutron.listSecurityGroupRules('mock_id', function(error, result){
+    neutron.getSecurityGroupRule('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
@@ -413,7 +419,7 @@ exports.getSecurityRule = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
     
-    neutron.getSecurityRule('mock_id', function(error, result){
+    neutron.getSecurityGroupRule('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -425,7 +431,7 @@ exports.getSecurityRule = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
     
-    neutron.getSecurityRule('mock_id', function(error, result){
+    neutron.getSecurityGroupRule('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -437,7 +443,7 @@ exports.getSecurityRule = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
     
-    neutron.getSecurityRule('mock_id', function(error, result){
+    neutron.getSecurityGroupRule('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -457,12 +463,13 @@ exports.createSecurityGroupRule = {
   confirmSecurityGroupRuleOnSuccess: function(test)
   {
     //stub out a completely valid request
+    var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
     
-    neutron.createSecurityGroupRule('mock_id', function(error, result){
+    neutron.createSecurityGroupRule('mock_id', {}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, this.valid_result, 'result should be ' + JSON.stringify(this.valid_result));
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
     });
   },
