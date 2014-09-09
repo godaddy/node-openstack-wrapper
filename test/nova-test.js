@@ -958,7 +958,7 @@ exports.disassociateFloatingIp = {
 
 
 
-exports.listIpPools = {
+exports.listFloatingIpPools = {
   setUp: function(cb){
     this.valid_response_body = {floating_ip_pools: [{name: 'mock_id'}]};
     this.valid_result = [{name: 'mock_id'}];
@@ -972,7 +972,7 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, result){
+    nova.listFloatingIpPools(function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -984,7 +984,7 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, result){
+    nova.listFloatingIpPools(function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -995,7 +995,7 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 200, 'meh');
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, result){
+    nova.listFloatingIpPools(function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1006,7 +1006,7 @@ exports.listIpPools = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     nova.setRequest(mock_request);
     
-    nova.listIpPools(function(error, result){
+    nova.listFloatingIpPools(function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1032,7 +1032,7 @@ exports.getIpPool = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     nova.setRequest(mock_request);
     
-    nova.getIpPool('mock_id', function(error, result){
+    nova.getFloatingIpPool('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1044,7 +1044,7 @@ exports.getIpPool = {
     var mock_request = getMockRequest(null, 200, {floating_ip_pools:[{name: 'testid'}]});
     nova.setRequest(mock_request);
     
-    nova.getIpPool("not-testid", function(error, result){
+    nova.getFloatingIpPool("not-testid", function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
