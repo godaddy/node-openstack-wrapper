@@ -9,7 +9,7 @@ npm install openstack-wrapper
 
 ## General Usage
 
-Step 1 - Basic Authentication:
+### Step 1 - Basic Authentication:
 
 ```js
 //Before any other calls are made into the Openstack system,
@@ -32,7 +32,7 @@ keystone.getToken('username', 'password', function(error, token){
 ```
 
 
-Step 2 - Listing Projects:
+### Step 2 - Listing Projects:
 
 ```js
 //Once a general authentication token value has been obtained
@@ -56,7 +56,7 @@ keystone.listProjects('username', 'general_token_value', function(error, project
 ```
 
 
-Step 3 - Project Authentication:
+### Step 3 - Authenticating for a particular project:
 
 ```js
 //Once a generic token and a project id have been obtained (through whatever means)
@@ -82,7 +82,7 @@ keystone.getProjectToken('general_token_value', 'project_id', function(error, pr
 ```
 
 
-Step 4 - Other Calls:
+### Step 4 - Other Calls:
 
 ```js
 //Now that we have a project specific token and the endpoint urls,
@@ -104,6 +104,7 @@ nova.listServers(function(error, servers_array){
 });
 ```
 
+-----------
 
 ## Simplified Usage:
 
@@ -121,7 +122,7 @@ OSWrap.getSimpleProject('username', 'password', 'keystone_url', function(error, 
   else
   {
     console.log('A Simple Project Object was retrieved', project);
-    
+
     //to use the project object:
     project.nova.listServers(function(error, servers_array){
       if(error)
@@ -139,20 +140,9 @@ OSWrap.getSimpleProject('username', 'password', 'keystone_url', function(error, 
 
 
 ## Objects & Methods
-### Glance (aka Image)
-* Glance(v2_public_url, project_token_value)
-* setTimeout(timeout_milliseconds)
-* setRequest(request_lib)
-* setMangler(mangler_lib)
-* listImages(callback)
-* getImage(image_id, callback)
-* queueImage(data_object, callback)
-* uploadImage(image_id, stream_object, callback)
-* updateImage(image_id, data_object, callback
-* removeImage(image_id, callback)
- 
+
 ### Keystone (aka Identity)
-* Keystone(v3_public_url)
+* new Keystone(v3_public_url)
 * setTimeout(timeout_milliseconds)
 * setRequest(request_lib)
 * setMangler(mangler_lib)
@@ -164,8 +154,73 @@ OSWrap.getSimpleProject('username', 'password', 'keystone_url', function(error, 
 * addRoleAssignment(project_token_value, project_id, entry_id, entry_type, role_id, callback)
 * removeRoleAssignment(project_token_value, project_id, entry_id, entry_type, role_id, callback)
 
+### Nova (aka Compute)
+* new Nova(v2_public_url, project_token_value)
+* setTimeout(timeout_milliseconds)
+* setRequest(request_lib)
+* setMangler(mangler_lib)
+* **Servers**
+  * listServers(callback)
+  * getServer(server_id, callback)
+  * createServer(data_object, callback)
+  * renameServer(server_id, new_name_string, callback)
+  * resizeServer(server_id, flavor_id, callback)
+  * confirmResizeServer(server_id, callback)
+  * revertResizeServer(server_id, callback)
+  * removeServer(server_id, callback)
+  * rebootServer(server_id, callback)
+  * forceRebootServer(server_id, callback)
+  * stopServer(server_id, callback)
+  * startServer(server_id, callback)
+  * pauseServer(server_id, callback)
+  * suspendServer(server_id, callback)
+  * resumeServer(server_id, callback)
+  * getConsoleURL(console_type_string, server_id, callback)
+  * getServerLog(server_id, log_length_integer, callback)
+  * createServerImage(server_id, data_object, callback)
+  * setMetaData(server_id, data_object, callback)
+* **Flavors**
+  * listFlavors(callback)
+  * getFlavor(flavor_id, callback)
+* **Floating Ips**
+  * listFloatingIps(callback)
+  * getFloatingIp(floating_ip_id, callback)
+  * createFloatingIp(data_object, callback)
+  * removeFloatingIp(floating_ip_id, callback)
+  * associateFloatingIp(server_id, ip_address, callback)
+  * disassociateFloatingIp(server_id, ip_address, callback)
+* **Floating IP Pools**
+  * listFloatingIpPools(callback)
+  * getFloatingIpPool(id, callback)
+* **Availability Zones**
+  * listAvailabilityZones(callback)
+  * getAvailabilityZone(id, callback)
+* **Key Pairs**
+  * listKeyPairs(callback)
+  * getKeyPair(key_pair_id, callback)
+  * createKeyPair(key_pair_name, public_key, callback)
+  * removeKeyPair(key_pair_id, callback)
+* **Quota/Usage**
+  * getQuotaSet(project_id, callback)
+  * getTenantUsage(project_id, start_date_object, end_date_object, callback)
+* **Security Groups**
+  * assignSecurityGroup(security_group_name, server_id, callback)
+  * removeSecurityGroup(security_group_name, server_id, callback)
+
+### Glance (aka Image)
+* new Glance(v2_public_url, project_token_value)
+* setTimeout(timeout_milliseconds)
+* setRequest(request_lib)
+* setMangler(mangler_lib)
+* listImages(callback)
+* getImage(image_id, callback)
+* queueImage(data_object, callback)
+* uploadImage(image_id, stream_object, callback)
+* updateImage(image_id, data_object, callback
+* removeImage(image_id, callback)
+
 ### Neutron (aka Network)
-* Neutron(v2_public_url)
+* new Neutron(v2_public_url)
 * setTimeout(timeout_milliseconds)
 * setRequest(request_lib)
 * setMangler(mangler_lib)
@@ -177,59 +232,6 @@ OSWrap.getSimpleProject('username', 'password', 'keystone_url', function(error, 
 * listSecurityGroupRules(callback)
 * getSecurityGroupRule(rule_id, callback)
 * createSecurityGroupRule(group_id, data_object, callback)
-
-### Nova (aka Compute)
-* Nova(v2_public_url, project_token_value)
-* setTimeout(timeout_milliseconds)
-* setRequest(request_lib)
-* setMangler(mangler_lib)  
-#### Servers
-* listServers(callback)
-* getServer(server_id, callback)
-* createServer(data_object, callback)
-* renameServer(server_id, new_name_string, callback)
-* resizeServer(server_id, flavor_id, callback)
-* confirmResizeServer(server_id, callback)
-* revertResizeServer(server_id, callback)
-* removeServer(server_id, callback)
-* rebootServer(server_id, callback)
-* forceRebootServer(server_id, callback)
-* stopServer(server_id, callback)
-* startServer(server_id, callback)
-* pauseServer(server_id, callback)
-* suspendServer(server_id, callback)
-* resumeServer(server_id, callback)
-* getConsoleURL(console_type_string, server_id, callback)
-* getServerLog(server_id, log_length_integer, callback)
-* createServerImage(server_id, data_object, callback)
-* setMetaData(server_id, data_object, callback)
-#### Flavors
-* listFlavors(callback)
-* getFlavor(flavor_id, callback)  
-#### Floating Ips
-* listFloatingIps(callback)
-* getFloatingIp(floating_ip_id, callback)
-* createFloatingIp(data_object, callback)
-* removeFloatingIp(floating_ip_id, callback)
-* associateFloatingIp(server_id, ip_address, callback)
-* disassociateFloatingIp(server_id, ip_address, callback)
-#### Floating IP Pools
-* listFloatingIpPools(callback)
-* getFloatingIpPool(id, callback)
-#### Availability Zones
-* listAvailabilityZones(callback)
-* getAvailabilityZone(id, callback)
-#### Key Pairs
-* listKeyPairs(callback)
-* getKeyPair(key_pair_id, callback)
-* createKeyPair(key_pair_name, public_key, callback)
-* removeKeyPair(key_pair_id, callback)
-#### Quota/Usage
-* getQuotaSet(project_id, callback)
-* getTenantUsage(project_id, start_date_object, end_date_object, callback)
-#### Security Groups
-* assignSecurityGroup(security_group_name, server_id, callback)
-* removeSecurityGroup(security_group_name, server_id, callback)
 
 
 
@@ -244,6 +246,6 @@ npm test
 
 ## License
 
-Copyright (c) 2011-2014, GoDaddy.com LLC
+Copyright (c) 2014 Go Daddy Operating Company, LLC
 
-See LICENSE.txt for more info.
+See [LICENSE.txt](LICENSE.txt) for more info.
