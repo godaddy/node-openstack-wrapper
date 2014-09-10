@@ -1015,7 +1015,7 @@ exports.listFloatingIpPools = {
 
 
 
-exports.getIpPool = {
+exports.getFloatingIpPool = {
   setUp: function(cb){
     //this function will actually call listIpPools so use a valid response body for that
     this.valid_response_body = {floating_ip_pools: [{name: 'mock_id'}]};
@@ -1387,33 +1387,63 @@ exports.getQuotaSet = {
 
 
 
-exports.getUsage = {
-  confirmValuesOnSuccess: function(test)
+exports.getTenantUsage = {
+  setUp: function(cb){
+    this.valid_response_body = {tenant_usage: {total_hours: 3.14167}};
+    this.valid_result = {total_hours: 3.14167};
+    
+    cb();
+  },
+  
+  confirmTenantUsageOnSuccess: function(test)
   {
-    //this is the format of whats coming back from OS
-    var mock_data = {tenant_usage: {server_usages: []}};
-    mock_data.tenant_usage.server_usages[0] = {local_gb: 20, memory_mb: 1024, vcpus: 1, flavor: 'm1.tiny'};
-    mock_data.tenant_usage.server_usages[1] = {local_gb: 40, memory_mb: 1024, vcpus: 2, flavor: 'm1.small'};
-    
-    //this should be the format of the result from the nova.usage.list function call
-    var test_object = {local_gb: 60, memory_mb: 2048, vcpus: 3, instances: 2, flavors: {'m1.tiny': 1, 'm1.small': 1}};
-    
-    var mock_request = getMockRequest(null, 200, mock_data);
+    var self = this;
+    var start_date = new Date();
+    var end_date = new Date();
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
     nova.setRequest(mock_request);
     
-    nova.getUsage('mock_id', function(error, result){
+    nova.getTenantUsage('mock_id', start_date, end_date, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, test_object, 'value should be an object: ' +  JSON.stringify(test_object));
+      test.deepEqual(result, self.valid_result, 'value should be an object: ' +  JSON.stringify(self.valid_result));
       test.done();
     });
   },
   
-  confirmErrorOn500: function(test)
+  confirmErrorOnInvalidJSONBody: function(test)
   {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    var start_date = new Date();
+    var end_date = new Date();
+    var mock_request = getMockRequest(null, 500, {meh: 'meh'});
     nova.setRequest(mock_request);
     
-    nova.getUsage('mock_id', function(error, result){
+    nova.getTenantUsage('mock_id', start_date, end_date, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+  
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    var start_date = new Date();
+    var end_date = new Date();
+    var mock_request = getMockRequest(null, 500, 'mock response');
+    nova.setRequest(mock_request);
+    
+    nova.getTenantUsage('mock_id', start_date, end_date, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+  
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    var start_date = new Date();
+    var end_date = new Date();
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    nova.setRequest(mock_request);
+    
+    nova.getTenantUsage('mock_id', start_date, end_date, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
