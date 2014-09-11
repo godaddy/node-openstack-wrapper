@@ -46,11 +46,8 @@ exports.getRequestOptions = {
 
 exports.listImages = {
   setUp: function(cb){
-    this.valid_response_body = {links: {self: 'selfurl', previous: null, next: null}, images: []};
-    this.valid_result = [];
-    this.valid_result.self = 'selfurl';
-    this.valid_result.previous = null;
-    this.valid_result.next = null;
+    this.valid_response_body = {images: [{id: 'mock_id'}, {id: 'mock_id2'}]};
+    this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
 
     cb();
   },
