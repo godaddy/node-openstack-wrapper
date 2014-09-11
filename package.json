@@ -4,7 +4,7 @@
   "description": "A simple js wrapper for the Openstack APIs",
   "contributors": [
     "Jason Robinson <jerobinson@godady.com>",
-    "Vincent Fiduccia <vincent@godaddy.com>",
+    "Vincent Fiduccia <vincent@godaddy.com>"
   ],
   "license": "MIT",
   "homepage": "http://github.com/godaddy/node-openstack-wrapper",
