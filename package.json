@@ -2,18 +2,18 @@
   "version": "0.1.0",
   "name": "openstack-wrapper",
   "description": "A simple js wrapper for the Openstack APIs",
-  "author": {
-    "name": "Jason Robinson & Vincent Fiduccia",
-    "email": "jerobinson@godaddy.com, vfiduccia@godaddy.com"
-  },
+  "contributors": [
+    "Jason Robinson <jerobinson@godady.com>",
+    "Vincent Fiduccia <vincent@godaddy.com>"
+  ],
   "license": "MIT",
-  "homepage": "http://github.secureserver.net/cloudplatform/openstack-wrapper",
+  "homepage": "http://github.com/godaddy/node-openstack-wrapper",
   "bugs": {
-    "url": "http://github.secureserver.net/cloudplatform/openstack-wrapper/issues"
+    "url": "http://github.com/godaddy/node-openstack-wrapper/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.secureserver.net/cloudplatform/openstack-wrapper.git"
+    "url": "https://github.com/godaddy/node-openstack-wrapper.git"
   },
   "dependencies": {
     "request": "~2"
@@ -22,8 +22,6 @@
     "nodeunit": "~0.9"
   },
   "main": "./index.js",
-  "readme": "put readme stuff here", 
-  "readmeFilename": "README.md",
   "scripts": {
     "test":  "./node_modules/nodeunit/bin/nodeunit ./test"
   }

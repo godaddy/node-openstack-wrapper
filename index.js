@@ -19,14 +19,14 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
   var n = 0;
   var j = 0;
   var endpoint_type = '';
-  
+
   keystone.getToken(username, password, function(error, token){
     if(error)
     {
       cb(error);
       return;
     }
-    
+
     //else
     keystone.getProjectToken(token.token, project_id, function(error, project_token){
       if(error)
@@ -34,7 +34,7 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
         cb(error);
         return;
       }
-      
+
       //else
       catalog_array = project_token.catalog;
       for(n = 0; n < catalog_array.length; n++)
@@ -45,10 +45,10 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
         {
           continue;
         }
-        
+
         endpoints_array = catalog_array[n].endpoints;
         endpoint_type = catalog_array[n].type;
-        
+
         for(j = 0; j < endpoints_array.length; j++)
         {
           if(endpoints_array[j].interface == 'public')
@@ -71,7 +71,7 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
           }
         }
       }
-      
+
       return_object.general_token = token;
       return_object.project_token = project_token;
       return_object.glance = new Glance(glance_url, project_token.token);
@@ -101,5 +101,5 @@ module.exports = {
   Neutron: Neutron,
   Nova: Nova,
   getSimpleProject: getSimpleProject,
-  setGlobalTimeout: setGlobalTimeout  
+  setGlobalTimeout: setGlobalTimeout
 }
