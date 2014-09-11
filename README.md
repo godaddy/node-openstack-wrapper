@@ -1,5 +1,5 @@
 # Openstack-Wrapper
->A convenience wrapper for many of Openstack's common features with a focus on projects/tenants
+A convenience wrapper for many of Openstack's common features with a focus on projects/tenants
 
 ## Install
 
@@ -233,6 +233,20 @@ OSWrap.getSimpleProject('username', 'password', 'keystone_url', function(error, 
 * getSecurityGroupRule(rule_id, callback)
 * createSecurityGroupRule(group_id, data_object, callback)
 
+### Errors
+* **OpenStackError** -- All other errors extend this, so you can check instanceof OpenStackError
+* BadRequestError (400)
+* InvalidStateError (400)
+* NotLoggedInError (401)
+* ForbiddenError (403)
+* NotFoundError (404)
+* BadMethodError (405)
+* LimitExceededError (413)
+* BadMediaError (415)
+* ValidationError (422)
+* GenericError (500)
+* NotImplementedError (501)
+* UnavailableError (503)
 
 
 ## Running Tests

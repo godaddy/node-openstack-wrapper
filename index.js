@@ -2,8 +2,7 @@ var Keystone = require('./lib/Keystone');
 var Glance = require('./lib/glance');
 var Neutron = require('./lib/neutron');
 var Nova = require('./lib/nova');
-
-
+var errors = require('./lib/os-errors');
 
 //A convenience method for quick/dirty work for those that already have a project_id
 //calls back with (error, project) where project already has all the individual objects setup
@@ -100,6 +99,7 @@ module.exports = {
   Keystone: Keystone,
   Neutron: Neutron,
   Nova: Nova,
+  errors: errors,
   getSimpleProject: getSimpleProject,
   setGlobalTimeout: setGlobalTimeout
 }
