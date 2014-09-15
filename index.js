@@ -1,4 +1,4 @@
-var Keystone = require('./lib/Keystone');
+var Keystone = require('./lib/keystone');
 var Glance = require('./lib/glance');
 var Neutron = require('./lib/neutron');
 var Nova = require('./lib/nova');
