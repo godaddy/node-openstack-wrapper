@@ -374,7 +374,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -387,7 +387,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -399,7 +399,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -411,7 +411,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
