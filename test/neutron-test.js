@@ -46,6 +46,132 @@ exports.getRequestOptions = {
 
 
 
+exports.listPorts = {
+  setUp: function(cb){
+    this.valid_response_body = {ports: [{id: 1}, {id: 2}]};
+    this.valid_result = [{id: 1}, {id: 2}];
+    
+    cb();
+  },
+
+  confirmPortsOnSuccess: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+    
+    neutron.listPorts(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  {
+    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+
+    neutron.listPorts(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.equal(util.isArray(result), true, 'value should be an array');
+      test.equal(result.length, 0, 'value should be an empty array');
+      test.done();
+    });
+  },
+
+  confirmEmptyArrayOnInvalidStringBody: function(test)
+  {
+    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.listPorts(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.equal(util.isArray(result), true, 'value should be an array');
+      test.equal(result.length, 0, 'value should be an empty array');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
+    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    neutron.setRequest(mock_request);
+
+    neutron.listPorts(function(error, result){
+      test.ok(error, 'We should receive an error object or string');
+      test.done();
+    });
+  }
+};
+
+
+
+exports.updatePort = {
+  setUp: function(cb){
+    this.valid_response_body = {port: {id: 'mock_id'}};
+    this.valid_result = {id: 'mock_id'};
+    
+    cb();
+  },
+
+  confirmPortOnSuccess: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+    
+    neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out a request with a valid response status but invalid response json body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+    
+    neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out a request with a valid response status but a junk text response body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    neutron.setRequest(mock_request);
+
+    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
+    neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+
 exports.listSecurityGroups = {
   setUp: function(cb){
     this.valid_response_body = {security_groups: [{}, {}]};
@@ -187,7 +313,7 @@ exports.createSecurityGroup = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createSecurityGroup('mock_name', 'mock_description', function(error, result){
+    neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -200,7 +326,7 @@ exports.createSecurityGroup = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.createSecurityGroup('mock_name', 'mock_description', function(error, result){
+    neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -212,7 +338,7 @@ exports.createSecurityGroup = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.createSecurityGroup('mock_name', 'mock_description', function(error, result){
+    neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -224,7 +350,7 @@ exports.createSecurityGroup = {
     neutron.setRequest(mock_request);
 
     //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
-    neutron.createSecurityGroup('mock_name', 'mock_description', function(error, result){
+    neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -248,7 +374,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -261,7 +387,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -273,7 +399,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -285,7 +411,7 @@ exports.updateSecurityGroup = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     neutron.setRequest(mock_request);
 
-    neutron.updateSecurityGroup('mock_id', 'mock_name', 'mock_description', function(error, result){
+    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
