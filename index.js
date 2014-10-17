@@ -55,16 +55,16 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
             if(endpoint_type == 'image')
             {
               //we have to add the v2 to the end to get the most current functionality
-              glance_url = endpoint_array[j].url + '/v2.0';
+              glance_url = endpoints_array[j].url + '/v2.0';
             }
             else if(endpoint_type == 'network')
             {
               //we have to add the v2 to the end to get the most current functionality
-              neutron_url = endpoint_array[j].url + '/2.0';
+              neutron_url = endpoints_array[j].url + '/2.0';
             }
             else if(endpoint_type == 'compute')
             {
-              nova_url = endpoint_array[j].url;
+              nova_url = endpoints_array[j].url;
             }
             break;
           }

@@ -114,7 +114,7 @@ nova.listServers(function(error, servers_array){
 //and return an object with nova, glance, and neutron objects ready to use
 
 var OSWrap = require('openstack-wrapper');
-OSWrap.getSimpleProject('username', 'password', 'keystone_url', function(error, project){
+OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', function(error, project){
   if(error)
   {
     console.log('An error occured', error);
