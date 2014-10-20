@@ -52,6 +52,8 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
         {
           if(endpoints_array[j].interface == 'public')
           {
+            endpoints_array[j].url = endpoints_array[j].url.replace(/\/$/, "");//yank any trailing /'s,
+
             if(endpoint_type == 'image')
             {
               //we have to add the v2 to the end to get the most current functionality
@@ -60,7 +62,7 @@ function getSimpleProject(username, password, project_id, keystone_url, cb)
             else if(endpoint_type == 'network')
             {
               //we have to add the v2 to the end to get the most current functionality
-              neutron_url = endpoints_array[j].url + '/2.0';
+              neutron_url = endpoints_array[j].url + '/v2.0';
             }
             else if(endpoint_type == 'compute')
             {
