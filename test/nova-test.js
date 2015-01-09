@@ -1501,3 +1501,83 @@ exports.removeSecurityGroup = {
     });
   }
 };
+
+
+
+exports.getImageMetaData = {
+  confirmResponseOnSuccess: function(test)
+  {
+    var mock_request = getMockRequest(null, 200, {metadata: {x:'x'}});
+    nova.setRequest(mock_request);
+
+    nova.getImageMetaData('mock_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual({x:'x'}, result, 'value should be {x: "x"}');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
+    nova.setRequest(mock_request);
+
+    nova.getImageMetaData('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    var start_date = new Date();
+    var end_date = new Date();
+    var mock_request = getMockRequest(null, 200, 'mock response');
+    nova.setRequest(mock_request);
+
+    nova.getImageMetaData('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    var start_date = new Date();
+    var end_date = new Date();
+    var mock_request = getMockRequest(null, 500, {metadata: {x: 'x'}});
+    nova.setRequest(mock_request);
+
+    nova.getImageMetaData('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+
+exports.setImageMetadata = {
+  confirmResponseOnSuccess: function(test)
+  {
+    var mock_request = getMockRequest(null, 200, {metadata: {x:'x'}});
+    nova.setRequest(mock_request);
+
+    nova.setImageMetaData('mock_id', {meh: 'meh'}, function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual({x:'x'}, result, 'value should be {x: "x"}');
+      test.done();
+    });
+  },
+
+  confirmErrorOnNon200: function(test)
+  {
+    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    nova.setRequest(mock_request);
+
+    nova.setImageMetaData('mock_id', {meh: 'meh'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
