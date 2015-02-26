@@ -903,14 +903,13 @@ exports.removeFloatingIp = {
 
 
 exports.associateFloatingIp = {
-  confirmObjectOnSuccess: function(test)
+  confirmNoErrorOnSuccess: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
+    var mock_request = getMockRequest(null, 204, true);
     nova.setRequest(mock_request);
 
     nova.associateFloatingIp('mock_id', 'mock-address', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -931,14 +930,13 @@ exports.associateFloatingIp = {
 
 
 exports.disassociateFloatingIp = {
-  confirmObjectOnSuccess: function(test)
+  confirmNoErrorOnSuccess: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
+    var mock_request = getMockRequest(null, 204, true);
     nova.setRequest(mock_request);
 
     nova.disassociateFloatingIp('mock_id', 'mock-address', function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
