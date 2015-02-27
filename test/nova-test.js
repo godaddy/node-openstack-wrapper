@@ -875,14 +875,13 @@ exports.createFloatingIp = {
 
 
 exports.removeFloatingIp = {
-  confirmObjectOnSuccess: function(test)
+  confirmNoErrorOnSuccess: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
+    var mock_request = getMockRequest(null, 200, true);
     nova.setRequest(mock_request);
 
-    nova.removeFloatingIp('mock_id', function(error, result){
+    nova.removeFloatingIp('mock_id', function(error){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
       test.done();
     });
   },
@@ -893,7 +892,7 @@ exports.removeFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
 
-    nova.removeFloatingIp("id", function(error, result){
+    nova.removeFloatingIp("id", function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -908,7 +907,7 @@ exports.associateFloatingIp = {
     var mock_request = getMockRequest(null, 204, true);
     nova.setRequest(mock_request);
 
-    nova.associateFloatingIp('mock_id', 'mock-address', function(error, result){
+    nova.associateFloatingIp('mock_id', 'mock-address', function(error){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -920,7 +919,7 @@ exports.associateFloatingIp = {
     var mock_request = getMockRequest(null, 500, 'Our server just borked');
     nova.setRequest(mock_request);
 
-    nova.associateFloatingIp("mock_id", 'mock-address', function(error, result){
+    nova.associateFloatingIp("mock_id", 'mock-address', function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
