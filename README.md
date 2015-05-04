@@ -203,6 +203,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
   * removeKeyPair(key_pair_id, callback)
 * **Quota/Usage**
   * getQuotaSet(project_id, callback)
+  * setQuotaSet(project_id, data_object, callback)
   * getTenantUsage(project_id, start_date_object, end_date_object, callback)
 * **Security Groups**
   * assignSecurityGroup(security_group_name, server_id, callback)

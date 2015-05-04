@@ -1384,6 +1384,63 @@ exports.getQuotaSet = {
 
 
 
+
+exports.setQuotaSet = {
+  setUp: function(cb){
+    this.valid_response_body = {quota_set: {ram: 1234}};
+    this.valid_result = {ram: 1234};
+
+    cb();
+  },
+
+  confirmValueOnSuccess: function(test)
+  {
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    nova.setRequest(mock_request);
+
+    nova.setQuotaSet('mock_id', {ram: 1234}, function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    nova.setRequest(mock_request);
+
+    nova.setQuotaSet('mock_id', {}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    var mock_request = getMockRequest(null, 200, 'meh');
+    nova.setRequest(mock_request);
+
+    nova.setQuotaSet('mock_id', {}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOn500: function(test)
+  {
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    nova.setRequest(mock_request);
+
+    nova.setQuotaSet('mock_id', {}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
 exports.getTenantUsage = {
   setUp: function(cb){
     this.valid_response_body = {tenant_usage: {total_hours: 3.14167}};
