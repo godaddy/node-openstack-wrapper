@@ -191,6 +191,7 @@ exports.getProjectToken = {
 
 
 
+
 exports.listProjects = {
   setUp: function(cb){
     //we'll need these a few times so...
@@ -211,7 +212,7 @@ exports.listProjects = {
     var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
-    keystone.listProjects('username', 'accesstoken', function(error, result){
+    keystone.listProjects('accesstoken', function(error, result){
       test.ifError(error, 'There should be no error')
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -225,7 +226,7 @@ exports.listProjects = {
     var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
     keystone.setRequest(mock_request);
 
-    keystone.listProjects('username', 'accesstoken', function(error, result){
+    keystone.listProjects('accesstoken', function(error, result){
       test.ok(error, "We should receive an error object");
       test.done();
     });
@@ -238,7 +239,7 @@ exports.listProjects = {
     var mock_request = getMockRequest(null, 200, {}, 'meh');
     keystone.setRequest(mock_request);
 
-    keystone.listProjects('username', 'accesstoken', function(error, result){
+    keystone.listProjects('accesstoken', function(error, result){
       test.ok(error, "We should receive an error object");
       test.done();
     });
@@ -251,13 +252,145 @@ exports.listProjects = {
     var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
-    keystone.listProjects('username', 'accesstoken', function(error, result){
+    keystone.listProjects('accesstoken', function(error, result){
       test.ok(error, "We should receive an error object");
       test.done();
     });
   }
 };
 
+
+
+exports.listUserProjects = {
+  setUp: function(cb){
+    //we'll need these a few times so...
+    this.valid_response_body = {links: {self: 'selfurl', previous: null, next: null}, projects: []};
+    this.valid_result = [];
+    this.valid_result.self = 'selfurl';
+    this.valid_result.previous = null;
+    this.valid_result.next = null;
+
+    cb();
+  },
+
+
+  confirmProjectsOnSuccess: function(test)
+  {
+    //stub out request with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
+    keystone.setRequest(mock_request);
+
+    keystone.listUserProjects('username', 'accesstoken', function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out the request for an 200 response with invalid json in the body
+    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
+    keystone.setRequest(mock_request);
+
+    keystone.listUserProjects('username', 'accesstoken', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out the request for a 200 response with an invalid text body
+    var mock_request = getMockRequest(null, 200, {}, 'meh');
+    keystone.setRequest(mock_request);
+
+    keystone.listUserProjects('username', 'accesstoken', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnNon200: function(test)
+  {
+    //stub out request for a 500 with a valid body (worst case scenario)
+    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    keystone.setRequest(mock_request);
+
+    keystone.listUserProjects('username', 'accesstoken', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  }
+};
+
+
+
+exports.getProjectByName = {
+   setUp: function(cb){
+    //we'll need these a few times so...
+    this.valid_response_body = {links: {self: 'selfurl', previous: null, next: null}, projects: [{meh: 'meh'}]};
+    this.valid_result = {meh: 'meh'};
+
+    cb();
+  },
+  
+  confirmProjectsOnSuccess: function(test)
+  {
+    //stub out request with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
+    keystone.setRequest(mock_request);
+
+    keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+  
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out the request for an 200 response with invalid json in the body
+    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
+    keystone.setRequest(mock_request);
+
+    keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out the request for a 200 response with an invalid text body
+    var mock_request = getMockRequest(null, 200, {}, 'meh');
+    keystone.setRequest(mock_request);
+
+    keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnNon200: function(test)
+  {
+    //stub out request for a 500 with a valid body (worst case scenario)
+    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    keystone.setRequest(mock_request);
+
+    keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  }
+};
 
 
 exports.listRoles = {

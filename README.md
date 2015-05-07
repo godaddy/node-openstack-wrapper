@@ -149,7 +149,9 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * getToken(username, password, callback)
 * getProjectTokenById(generic_token_value, project_id, callback)
 * getProjectTokenByName(generic_token_value, domain_id, project_name, callback)
-* listProjects(username, generic_token_value, callback)
+* listProjects(project_token_value, callback) - token from any project w/admin privledges
+* getProjectByName(project_token_value, project_name, callback) - token from any project w/admin privledges
+* listUserProjects(username, generic_token_value, callback)
 * listRoles(project_token_value, callback)
 * listRoleAssignments(project_token_value, project_id, callback)
 * addRoleAssignment(project_token_value, project_id, entry_id, entry_type, role_id, callback)
