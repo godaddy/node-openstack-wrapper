@@ -596,3 +596,147 @@ exports.removeRoleAssignment = {
     });
   }
 };
+
+
+exports.listMetaEnvironments = {
+  setUp: function(cb){
+    this.valid_result = [{id: 'DEV', name: 'Development'}];
+    cb();
+  },
+
+
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out a rquest with a valid result
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, {environments: [{id: 'DEV', name: 'Development'}]});
+    keystone.setRequest(mock_request);
+
+    keystone.listMetaEnvironments('access_token', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnNon200: function(test)
+  {
+    //stub out request for an invalid status
+    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    keystone.setRequest(mock_request);
+
+    keystone.listMetaEnvironments('accesstoken', function(error, result){
+      test.ok(error, "We should receive an error object or string");
+      test.done();
+    });
+  }
+};
+
+
+exports.listMetaOwningGroups = {
+  setUp: function(cb){
+    this.valid_result = [{id: '1 - Group Name', name: 'Group Name'}];
+    cb();
+  },
+
+
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out a rquest with a valid result
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, {owning_groups: [{id: '1 - Group Name', name: 'Group Name'}]});
+    keystone.setRequest(mock_request);
+
+    keystone.listMetaOwningGroups('access_token', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, JSON.stringify(result) + '!=' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnNon200: function(test)
+  {
+    //stub out request for an invalid status
+    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    keystone.setRequest(mock_request);
+
+    keystone.listMetaOwningGroups('accesstoken', function(error, result){
+      test.ok(error, "We should receive an error object or string");
+      test.done();
+    });
+  }
+};
+
+
+exports.listProjectMeta = {
+  setUp: function(cb){
+    this.valid_result = {name: 'value'};
+    cb();
+  },
+
+
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out a rquest with a valid result
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, {meta: {name: 'value'}});
+    keystone.setRequest(mock_request);
+
+    keystone.listProjectMeta('access_token', 'project_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnNon200: function(test)
+  {
+    //stub out request for an invalid status
+    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    keystone.setRequest(mock_request);
+
+    keystone.listProjectMeta('accesstoken', 'project_id', function(error, result){
+      test.ok(error, "We should receive an error object or string");
+      test.done();
+    });
+  }
+};
+
+
+exports.updateProjectMeta = {
+  setUp: function(cb){
+    this.valid_result = {name: 'value'};
+    cb();
+  },
+
+
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out a rquest with a valid result
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, {meta: {name: 'value'}});
+    keystone.setRequest(mock_request);
+
+    keystone.updateProjectMeta('access_token', 'project_id', 'ENV', 'GROUPID', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+
+  confirmErrorOnNon200: function(test)
+  {
+    //stub out request for an invalid status
+    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    keystone.setRequest(mock_request);
+
+    keystone.updateProjectMeta('accesstoken', 'project_id', 'ENV', 'GROUPID', function(error, result){
+      test.ok(error, "We should receive an error object or string");
+      test.done();
+    });
+  }
+};
