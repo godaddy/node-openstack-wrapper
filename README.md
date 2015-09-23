@@ -229,6 +229,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * setRequest(request_lib)
 * setMangler(mangler_lib)
 * listNetworks(callback)
+* listRouters(callback)
 * listFloatingIps(callback)
 * listPorts(callback)
 * updatePort(port_id, data_object, callback)
