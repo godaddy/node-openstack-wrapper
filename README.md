@@ -228,24 +228,32 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * setTimeout(timeout_milliseconds)
 * setRequest(request_lib)
 * setMangler(mangler_lib)
+* **Networks**
 * listNetworks(callback(error, array))
 * getNetwork(network_id, callback(error, obj))
+* **Routers**
 * listRouters(callback(error, array))
 * getRouter(router_id, callback(error, obj))
+* **FloatingIps**
+* createFloatingIp(floating_network_id, callback(error, obj))
 * listFloatingIps(callback(error, array))
 * getFloatingIp(ip_id, callback(error, obj))
 * updateFloatingIp(ip_id, port_id, callback(error, obj))
+* removeFloatingIp(ip_id, callback(error))
+* **Ports**
 * listPorts(callback(error, array))
 * getPort(port_id, callback(error, obj))
 * updatePort(port_id, data_object, callback(error, obj))
+* **Security Groups**
+* createSecurityGroup(group_name, data_object, callback(error, obj))
 * listSecurityGroups(project_id, callback(error, array))
 * getSecurityGroup(group_id, callback(error, obj))
-* createSecurityGroup(group_name, data_object, callback(error, obj))
 * updateSecurityGroup(group_id, data_object, callback(error, obj))
 * removeSecurityGroup(group_id, callback(error))
+* **SecurityGroupRules**
+* createSecurityGroupRule(group_id, data_object, callback(error, obj))
 * listSecurityGroupRules(callback(error, array))
 * getSecurityGroupRule(rule_id, callback(error, obj))
-* createSecurityGroupRule(group_id, data_object, callback(error, obj))
 
 ### Errors
 * **OpenStackError** -- All other errors extend this, so you can check instanceof OpenStackError

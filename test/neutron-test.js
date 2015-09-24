@@ -172,6 +172,68 @@ exports.getNetwork = {
 
 
 
+
+exports.createFloatingIp = {
+  setUp: function(cb){
+    this.valid_response_body = {floatingip: {id: 'mock_id'}};
+    this.valid_result = {id: 'mock_id'};
+    
+    cb();
+  },
+
+  confirmValidResultOnSuccess: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.createFloatingIp('mock_network_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out a request with a valid response status but invalid response json body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+
+    neutron.createFloatingIp('mock_network_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out a request with a valid response status but a junk text response body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.createFloatingIp('mock_network_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    neutron.setRequest(mock_request);
+
+    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
+    neutron.createFloatingIp('mock_network_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+
 exports.listFloatingIps = {
   setUp: function(cb){
     this.valid_response_body = {floatingips: [{id: 1}, {id: 2}]};
@@ -291,6 +353,98 @@ exports.getFloatingIp = {
 
     neutron.getFloatingIp('id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
+      test.done();
+    });
+  }
+};
+
+
+
+exports.updateFloatingIp = {
+  setUp: function(cb){
+    this.valid_response_body = {floatingip: {id: 'mock_id'}};
+    this.valid_result = {id: 'mock_id'};
+    
+    cb();
+  },
+
+  confirmValidResultOnSuccess: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+    
+    neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out a request with a valid response status but invalid response json body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+    
+    neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out a request with a valid response status but a junk text response body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    neutron.setRequest(mock_request);
+
+    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
+    neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+exports.removeFloatingIp = {
+  setUp: function(cb){
+    cb();
+  },
+
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out a completely valid response
+    var mock_request = getMockRequest(null, 200, '');
+    neutron.setRequest(mock_request);
+
+    neutron.removeFloatingIp('mock_id', function(error){
+      test.ifError(error, 'There should be no error');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
+    var mock_request = getMockRequest(null, 500, '');
+    neutron.setRequest(mock_request);
+
+    neutron.removeFloatingIp('mock_id', function(error){
+      test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
