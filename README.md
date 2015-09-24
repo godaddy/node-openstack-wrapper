@@ -234,6 +234,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * getRouter(router_id, callback(error, obj))
 * listFloatingIps(callback(error, array))
 * getFloatingIp(ip_id, callback(error, obj))
+* updateFloatingIp(ip_id, port_id, callback(error, obj))
 * listPorts(callback(error, array))
 * getPort(port_id, callback(error, obj))
 * updatePort(port_id, data_object, callback(error, obj))
