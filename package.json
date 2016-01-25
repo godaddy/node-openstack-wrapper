@@ -1,5 +1,5 @@
 {
-  "version": "1.2.14",
+  "version": "1.2.15",
   "name": "openstack-wrapper",
   "description": "A simple js wrapper for the Openstack APIs",
   "contributors": [
@@ -8,7 +8,7 @@
   ],
   "license": "MIT",
   "homepage": "http://github.com/godaddy/node-openstack-wrapper",
-  "keywords": ['openstack', 'keystone', 'nova', 'neutron', 'glance'],
+  "keywords": ["openstack", "keystone", "nova", "neutron", "glance"],
   "bugs": {
     "url": "http://github.com/godaddy/node-openstack-wrapper/issues"
   },
