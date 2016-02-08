@@ -720,7 +720,7 @@ exports.updateProjectMeta = {
     var mock_request = getMockRequest(null, 200, {}, {meta: {name: 'value'}});
     keystone.setRequest(mock_request);
 
-    keystone.updateProjectMeta('access_token', 'project_id', 'ENV', 'GROUPID', function(error, result){
+    keystone.updateProjectMeta('access_token', 'project_id', {environment: 'ENV', owning_group: 'GROUPID'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -734,7 +734,7 @@ exports.updateProjectMeta = {
     var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
-    keystone.updateProjectMeta('accesstoken', 'project_id', 'ENV', 'GROUPID', function(error, result){
+    keystone.updateProjectMeta('accesstoken', 'project_id', {environment: 'ENV', owning_grouop: 'GROUPID'}, function(error, result){
       test.ok(error, "We should receive an error object or string");
       test.done();
     });
