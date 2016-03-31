@@ -50,7 +50,7 @@ exports.listNetworks = {
   setUp: function(cb){
     this.valid_response_body = {networks: [{id: 1}, {id: 2}]};
     this.valid_result = [{id: 1}, {id: 2}];
-    
+
     cb();
   },
 
@@ -60,7 +60,7 @@ exports.listNetworks = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.listNetworks(function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -115,7 +115,7 @@ exports.getNetwork = {
   setUp: function(cb){
     this.valid_response_body = {network: {id: 1}};
     this.valid_result = {id: 1};
-    
+
     cb();
   },
 
@@ -125,7 +125,7 @@ exports.getNetwork = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.getNetwork('id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -177,7 +177,7 @@ exports.createFloatingIp = {
   setUp: function(cb){
     this.valid_response_body = {floatingip: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
-    
+
     cb();
   },
 
@@ -238,7 +238,7 @@ exports.listFloatingIps = {
   setUp: function(cb){
     this.valid_response_body = {floatingips: [{id: 1}, {id: 2}]};
     this.valid_result = [{id: 1}, {id: 2}];
-    
+
     cb();
   },
 
@@ -248,7 +248,7 @@ exports.listFloatingIps = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.listFloatingIps(function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -303,7 +303,7 @@ exports.getFloatingIp = {
   setUp: function(cb){
     this.valid_response_body = {floatingip: {id: 1}};
     this.valid_result = {id: 1};
-    
+
     cb();
   },
 
@@ -313,7 +313,7 @@ exports.getFloatingIp = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.getFloatingIp('id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -364,7 +364,7 @@ exports.updateFloatingIp = {
   setUp: function(cb){
     this.valid_response_body = {floatingip: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
-    
+
     cb();
   },
 
@@ -374,7 +374,7 @@ exports.updateFloatingIp = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -387,7 +387,7 @@ exports.updateFloatingIp = {
     //stub out a request with a valid response status but invalid response json body
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
-    
+
     neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
@@ -455,7 +455,7 @@ exports.listPorts = {
   setUp: function(cb){
     this.valid_response_body = {ports: [{id: 1}, {id: 2}]};
     this.valid_result = [{id: 1}, {id: 2}];
-    
+
     cb();
   },
 
@@ -465,7 +465,7 @@ exports.listPorts = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.listPorts(function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -520,7 +520,7 @@ exports.updatePort = {
   setUp: function(cb){
     this.valid_response_body = {port: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
-    
+
     cb();
   },
 
@@ -530,7 +530,7 @@ exports.updatePort = {
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
-    
+
     neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
@@ -543,7 +543,7 @@ exports.updatePort = {
     //stub out a request with a valid response status but invalid response json body
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
-    
+
     neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
@@ -1069,6 +1069,221 @@ exports.removeSecurityGroupRule = {
     neutron.setRequest(mock_request);
 
     neutron.removeSecurityGroupRule('mock_id', function(error){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+exports.listLoadBalancers = {
+  setUp: function(cb){
+    this.valid_response_body = {loadbalancers: [{id: 'mock_id'}, {id: 'mock_id2'}]
+    };
+    this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
+
+    cb();
+  },
+
+  confirmLoadBalancersOnSuccess: function(test)
+  {
+    //stub out a completely valid request
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.listLoadBalancers(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  {
+    //stub out a request with a valid status but an invalid json response body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+
+    neutron.listLoadBalancers(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.equal(util.isArray(result), true, 'result should be an array');
+      test.equal(result.length, 0, 'result should be an empty array');
+      test.done();
+    });
+  },
+
+  confirmEmptyArrayOnInvalidStringBody: function(test)
+  {
+    //stub out a request with a valid status but invalid text body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.listLoadBalancers(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.equal(util.isArray(result), true, 'result should be an array');
+      test.deepEqual(result, [], 'result should be a blank array');
+      test.done();
+    });
+  },
+
+  confirmErrorOnNon200: function(test)
+  {
+    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.listLoadBalancers(function(error, rules_array){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+
+
+exports.getLoadBalancers = {
+  setUp: function(cb){
+    this.valid_response_body = {loadbalancer: {id: 'mock_id'}};
+    this.valid_result = {id: 'mock_id'};
+
+    cb();
+  },
+
+  confirmLoadBalancerOnSuccess: function(test)
+  {
+    //stub out a completely valid request
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.getLoadBalancer('mock_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out a request with a valid status but an invalid json response body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+
+    neutron.getLoadBalancer('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out a request with a valid status but invalid text body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.getLoadBalancer('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object or string');
+      test.done();
+    });
+  },
+
+  confirmErrorOnNon200: function(test)
+  {
+    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
+    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.getLoadBalancer('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object or string');
+      test.done();
+    });
+  }
+};
+
+exports.updateLoadBalancer = {
+  setUp: function(cb){
+    this.valid_response_body = {loadbalancer: {id: 'mock_id'}};
+    this.valid_result = {id: 'mock_id'};
+
+    cb();
+  },
+
+  confirmValidResultOnSuccess: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidJSONBody: function(test)
+  {
+    //stub out a request with a valid response status but invalid response json body
+    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    neutron.setRequest(mock_request);
+
+    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStringBody: function(test)
+  {
+    //stub out a request with a valid response status but a junk text response body
+    var mock_request = getMockRequest(null, 200, 'meh');
+    neutron.setRequest(mock_request);
+
+    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    neutron.setRequest(mock_request);
+
+    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
+    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
+exports.removeLoadBalancer = {
+  setUp: function(cb){
+    cb();
+  },
+
+  confirmNoErrorOnSuccess: function(test)
+  {
+    //stub out a completely valid response
+    var mock_request = getMockRequest(null, 200, '');
+    neutron.setRequest(mock_request);
+
+    neutron.removeLoadBalancer('mock_id', function(error){
+      test.ifError(error, 'There should be no error');
+      test.done();
+    });
+  },
+
+  confirmErrorOnInvalidStatus: function(test)
+  {
+    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
+    var mock_request = getMockRequest(null, 500, '');
+    neutron.setRequest(mock_request);
+
+    neutron.removeLoadBalancer('mock_id', function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
