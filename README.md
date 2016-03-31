@@ -277,6 +277,7 @@ To run the tests:
 
 ``` bash
 cd openstack_wrapper/
+npm install
 npm test
 ```
 
