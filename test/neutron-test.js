@@ -1351,7 +1351,7 @@ exports.removeLoadBalancer = {
 };
 
 
-exports.getStats = {
+exports.getLBStats = {
   setUp: function(cb){
     this.valid_response_body = {stats: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -1366,7 +1366,7 @@ exports.getStats = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getStats('lb_id', function(error, result){
+    neutron.getLBStats('lb_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1379,7 +1379,7 @@ exports.getStats = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.getStats('lb_id', function(error, result){
+    neutron.getLBStats('lb_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1391,7 +1391,7 @@ exports.getStats = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.getStats('lb_id', function(error, result){
+    neutron.getLBStats('lb_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -1403,7 +1403,7 @@ exports.getStats = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getStats('lb_id', function(error, result){
+    neutron.getLBStats('lb_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -1411,23 +1411,22 @@ exports.getStats = {
 };
 
 
-exports.listListeners = {
+exports.listLBListeners = {
   setUp: function(cb){
-    this.valid_response_body = {listeners: [{id: 'mock_id'}, {id: 'mock_id2'}]
-    };
+    this.valid_response_body = {listeners: [{id: 'mock_id'}, {id: 'mock_id2'}]};
     this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
 
     cb();
   },
 
-  confirmListenersOnSuccess: function(test)
+  confirmLBListenersOnSuccess: function(test)
   {
     //stub out a completely valid request
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.listListeners(function(error, result){
+    neutron.listLBListeners(function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1440,7 +1439,7 @@ exports.listListeners = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.listListeners(function(error, result){
+    neutron.listLBListeners(function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
       test.equal(result.length, 0, 'result should be an empty array');
@@ -1454,7 +1453,7 @@ exports.listListeners = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.listListeners(function(error, result){
+    neutron.listLBListeners(function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
       test.deepEqual(result, [], 'result should be a blank array');
@@ -1468,7 +1467,7 @@ exports.listListeners = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.listListeners(function(error, rules_array){
+    neutron.listLBListeners(function(error, rules_array){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1476,7 +1475,7 @@ exports.listListeners = {
 };
 
 
-exports.getListener = {
+exports.getLBListener = {
   setUp: function(cb){
     this.valid_response_body = {listener: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -1484,14 +1483,14 @@ exports.getListener = {
     cb();
   },
 
-  confirmListenerOnSuccess: function(test)
+  confirmLBListenerOnSuccess: function(test)
   {
     //stub out a completely valid request
     var self = this;
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getListener('mock_id', function(error, result){
+    neutron.getLBListener('mock_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1504,7 +1503,7 @@ exports.getListener = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.getListener('mock_id', function(error, result){
+    neutron.getLBListener('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1516,7 +1515,7 @@ exports.getListener = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.getListener('mock_id', function(error, result){
+    neutron.getLBListener('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -1528,7 +1527,7 @@ exports.getListener = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getListener('mock_id', function(error, result){
+    neutron.getLBListener('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -1536,7 +1535,7 @@ exports.getListener = {
 };
 
 
-exports.createListener = {
+exports.createLBListener = {
   setUp: function(cb){
     this.valid_response_body = {listener: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -1551,7 +1550,7 @@ exports.createListener = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
+    neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1564,7 +1563,7 @@ exports.createListener = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.createListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
+    neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1576,7 +1575,7 @@ exports.createListener = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.createListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
+    neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1588,14 +1587,14 @@ exports.createListener = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
+    neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.updateListener = {
+exports.updateLBListener = {
   setUp: function(cb){
     this.valid_response_body = {listener: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -1610,7 +1609,7 @@ exports.updateListener = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.updateListener('mock_id', {description: 'Updated Listener'}, function(error, result){
+    neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1623,7 +1622,7 @@ exports.updateListener = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.updateListener('mock_id', {description: 'Updated Listener'}, function(error, result){
+    neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1635,7 +1634,7 @@ exports.updateListener = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.updateListener('mock_id', {description: 'Updated Listener'}, function(error, result){
+    neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1647,14 +1646,14 @@ exports.updateListener = {
     neutron.setRequest(mock_request);
 
     //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
-    neutron.updateListener('mock_id', {description: 'Updated Listener'}, function(error, result){
+    neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.removeListener = {
+exports.removeLBListener = {
   setUp: function(cb){
     cb();
   },
@@ -1665,7 +1664,7 @@ exports.removeListener = {
     var mock_request = getMockRequest(null, 200, '');
     neutron.setRequest(mock_request);
 
-    neutron.removeListener('mock_id', function(error){
+    neutron.removeLBListener('mock_id', function(error){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -1677,7 +1676,7 @@ exports.removeListener = {
     var mock_request = getMockRequest(null, 500, '');
     neutron.setRequest(mock_request);
 
-    neutron.removeListener('mock_id', function(error){
+    neutron.removeLBListener('mock_id', function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1687,10 +1686,9 @@ exports.removeListener = {
 
 exports.listLBPools = {
   setUp: function(cb){
-    this.valid_response_body = {pools: [{id: 'mock_id'}, {id: 'mock_id2'}]
-    };
+    this.valid_response_body = {pools: [{id: 'mock_id'}, {id: 'mock_id2'}]};
     this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
-
+    
     cb();
   },
 
@@ -1959,10 +1957,9 @@ exports.removeLBPool = {
 };
 
 
-exports.listMembers = {
+exports.listLBPoolMembers = {
   setUp: function(cb){
-    this.valid_response_body = {members: [{id: 'mock_id'}, {id: 'mock_id2'}]
-    };
+    this.valid_response_body = {members: [{id: 'mock_id'}, {id: 'mock_id2'}]};
     this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
 
     cb();
@@ -1975,7 +1972,7 @@ exports.listMembers = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.listMembers('pool_id', function(error, result){
+    neutron.listLBPoolMembers('pool_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1987,8 +1984,8 @@ exports.listMembers = {
     //stub out a request with a valid status but an invalid json response body
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
-
-    neutron.listMembers('pool_id', function(error, result){
+    
+    neutron.listLBPoolMembers('pool_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
       test.equal(result.length, 0, 'result should be an empty array');
@@ -2002,7 +1999,7 @@ exports.listMembers = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.listMembers('pool_id', function(error, result){
+    neutron.listLBPoolMembers('pool_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
       test.deepEqual(result, [], 'result should be a blank array');
@@ -2016,7 +2013,7 @@ exports.listMembers = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.listMembers('pool_id', function(error, rules_array){
+    neutron.listLBPoolMembers('pool_id', function(error, rules_array){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2024,7 +2021,7 @@ exports.listMembers = {
 };
 
 
-exports.getMember = {
+exports.getLBPoolMember = {
   setUp: function(cb){
     this.valid_response_body = {member: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -2039,7 +2036,7 @@ exports.getMember = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getMember('pool_id', 'member_id', function(error, result){
+    neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2052,7 +2049,7 @@ exports.getMember = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.getMember('pool_id', 'member_id', function(error, result){
+    neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2064,7 +2061,7 @@ exports.getMember = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.getMember('pool_id', 'member_id', function(error, result){
+    neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -2076,7 +2073,7 @@ exports.getMember = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getMember('pool_id', 'member_id', function(error, result){
+    neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -2084,7 +2081,7 @@ exports.getMember = {
 };
 
 
-exports.createMember= {
+exports.createLBPoolMember= {
   setUp: function(cb){
     this.valid_response_body = {member: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -2099,7 +2096,7 @@ exports.createMember= {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2112,7 +2109,7 @@ exports.createMember= {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.createMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2124,7 +2121,7 @@ exports.createMember= {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.createMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2136,14 +2133,14 @@ exports.createMember= {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.updateMember = {
+exports.updateLBPoolMember = {
   setUp: function(cb){
     this.valid_response_body = {member: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -2158,7 +2155,7 @@ exports.updateMember = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.updateMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
+    neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2171,7 +2168,7 @@ exports.updateMember = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.updateMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
+    neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2183,7 +2180,7 @@ exports.updateMember = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.updateMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
+    neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2195,14 +2192,14 @@ exports.updateMember = {
     neutron.setRequest(mock_request);
 
     //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
-    neutron.updateMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
+    neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.removeMember = {
+exports.removeLBPoolMember = {
   setUp: function(cb){
     cb();
   },
@@ -2213,7 +2210,7 @@ exports.removeMember = {
     var mock_request = getMockRequest(null, 200, '');
     neutron.setRequest(mock_request);
 
-    neutron.removeMember('pool_id', 'member_id', function(error){
+    neutron.removeLBPoolMember('pool_id', 'member_id', function(error){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -2225,7 +2222,7 @@ exports.removeMember = {
     var mock_request = getMockRequest(null, 500, '');
     neutron.setRequest(mock_request);
 
-    neutron.removeMember('pool_id', 'member_id', function(error){
+    neutron.removeLBPoolMember('pool_id', 'member_id', function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2234,26 +2231,7 @@ exports.removeMember = {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-exports.listHealthMonitors = {
+exports.listLBHealthMonitors = {
   setUp: function(cb){
     this.valid_response_body = {healthmonitors: [{id: 'mock_id'}, {id: 'mock_id2'}]
     };
@@ -2269,7 +2247,7 @@ exports.listHealthMonitors = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.listHealthMonitors(function(error, result){
+    neutron.listLBHealthMonitors(function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2282,7 +2260,7 @@ exports.listHealthMonitors = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.listHealthMonitors(function(error, result){
+    neutron.listLBHealthMonitors(function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
       test.equal(result.length, 0, 'result should be an empty array');
@@ -2296,7 +2274,7 @@ exports.listHealthMonitors = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.listHealthMonitors(function(error, result){
+    neutron.listLBHealthMonitors(function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
       test.deepEqual(result, [], 'result should be a blank array');
@@ -2310,7 +2288,7 @@ exports.listHealthMonitors = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.listHealthMonitors(function(error, rules_array){
+    neutron.listLBHealthMonitors(function(error, rules_array){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2318,7 +2296,7 @@ exports.listHealthMonitors = {
 };
 
 
-exports.getHealthMonitor = {
+exports.getLBHealthMonitor = {
   setUp: function(cb){
     this.valid_response_body = {healthmonitor: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -2333,7 +2311,7 @@ exports.getHealthMonitor = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getHealthMonitor('health_monitor_id', function(error, result){
+    neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2346,7 +2324,7 @@ exports.getHealthMonitor = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.getHealthMonitor('health_monitor_id', function(error, result){
+    neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2358,7 +2336,7 @@ exports.getHealthMonitor = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.getHealthMonitor('health_monitor_id', function(error, result){
+    neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -2370,7 +2348,7 @@ exports.getHealthMonitor = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.getHealthMonitor('health_monitor_id', function(error, result){
+    neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
       test.ok(error, 'We should receive an error object or string');
       test.done();
     });
@@ -2378,7 +2356,7 @@ exports.getHealthMonitor = {
 };
 
 
-exports.createHealthMonitor= {
+exports.createLBHealthMonitor= {
   setUp: function(cb){
     this.valid_response_body = {healthmonitor: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -2393,7 +2371,7 @@ exports.createHealthMonitor= {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
+    neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2406,7 +2384,7 @@ exports.createHealthMonitor= {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.createHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
+    neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2418,7 +2396,7 @@ exports.createHealthMonitor= {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.createHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
+    neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2430,14 +2408,14 @@ exports.createHealthMonitor= {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
+    neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.updateHealthMonitor = {
+exports.updateLBHealthMonitor = {
   setUp: function(cb){
     this.valid_response_body = {healthmonitor: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
@@ -2452,7 +2430,7 @@ exports.updateHealthMonitor = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.updateHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
+    neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -2465,7 +2443,7 @@ exports.updateHealthMonitor = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.updateHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
+    neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2477,7 +2455,7 @@ exports.updateHealthMonitor = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.updateHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
+    neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -2489,14 +2467,14 @@ exports.updateHealthMonitor = {
     neutron.setRequest(mock_request);
 
     //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
-    neutron.updateHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
+    neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.removeHealthMonitor = {
+exports.removeLBHealthMonitor = {
   setUp: function(cb){
     cb();
   },
@@ -2507,7 +2485,7 @@ exports.removeHealthMonitor = {
     var mock_request = getMockRequest(null, 200, '');
     neutron.setRequest(mock_request);
 
-    neutron.removeHealthMonitor('health_monitor_id', function(error){
+    neutron.removeLBHealthMonitor('health_monitor_id', function(error){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -2519,7 +2497,7 @@ exports.removeHealthMonitor = {
     var mock_request = getMockRequest(null, 500, '');
     neutron.setRequest(mock_request);
 
-    neutron.removeHealthMonitor('health_monitor_id', function(error){
+    neutron.removeLBHealthMonitor('health_monitor_id', function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
