@@ -256,19 +256,21 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * getSecurityGroupRule(rule_id, callback(error, obj))
 
 ### Errors
+
 * **OpenStackError** -- All other errors extend this, so you can check instanceof OpenStackError
-* BadRequestError (400)
-* InvalidStateError (400)
-* NotLoggedInError (401)
-* ForbiddenError (403)
-* NotFoundError (404)
-* BadMethodError (405)
-* LimitExceededError (413)
-* BadMediaError (415)
-* ValidationError (422)
-* GenericError (500)
-* NotImplementedError (501)
-* UnavailableError (503)
+##### Note: As of version 1.4.0 this is depreciated, and will be removed in 1.5.X
+	* BadRequestError (400)
+	* InvalidStateError (400)
+	* NotLoggedInError (401)
+	* ForbiddenError (403)
+	* NotFoundError (404)
+	* BadMethodError (405)
+	* LimitExceededError (413)
+	* BadMediaError (415)
+	* ValidationError (422)
+	* GenericError (500)
+	* NotImplementedError (501)
+	* UnavailableError (503)
 
 
 ## Running Tests
@@ -280,6 +282,12 @@ cd openstack_wrapper/
 npm install
 npm test
 ```
+
+## Change Log
+### 1.4.0
+	
+* Removed usage of OpenStackErrors. Specifically removed all references of isError() & getError() in favor of: isRequestError() & getRequestError().
+* Added structures for additional neutron functionality to be released in 1.5.X
 
 ## License
 
