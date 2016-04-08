@@ -1688,7 +1688,7 @@ exports.listLBPools = {
   setUp: function(cb){
     this.valid_response_body = {pools: [{id: 'mock_id'}, {id: 'mock_id2'}]};
     this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
-    
+
     cb();
   },
 
@@ -1823,7 +1823,7 @@ exports.createLBPool = {
     var mock_request = getMockRequest(null, 200, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createLBPool('tenant_id', 'protocol', 'lb_algoritm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();
@@ -1836,7 +1836,7 @@ exports.createLBPool = {
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
 
-    neutron.createLBPool('tenant_id', 'protocol', 'lb_algoritm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1848,7 +1848,7 @@ exports.createLBPool = {
     var mock_request = getMockRequest(null, 200, 'meh');
     neutron.setRequest(mock_request);
 
-    neutron.createLBPool('tenant_id', 'protocol', 'lb_algoritm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1860,7 +1860,7 @@ exports.createLBPool = {
     var mock_request = getMockRequest(null, 500, this.valid_response_body);
     neutron.setRequest(mock_request);
 
-    neutron.createLBPool('tenant_id', 'protocol', 'lb_algoritm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
+    neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -1984,7 +1984,7 @@ exports.listLBPoolMembers = {
     //stub out a request with a valid status but an invalid json response body
     var mock_request = getMockRequest(null, 200, {meh:'meh'});
     neutron.setRequest(mock_request);
-    
+
     neutron.listLBPoolMembers('pool_id', function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(util.isArray(result), true, 'result should be an array');
