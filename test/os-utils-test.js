@@ -54,7 +54,7 @@ exports.getArgsWithCallback = {
   {
     var param1 = function(){};
     var args = utils.getArgsWithCallback(2, [param1]);
-    test.deepEqual(args, [undefined, param1], 'Should return array of same length with undefined elements for missing arguments');
+    test.deepEqual(args, [null, param1], 'Should return array of same length with undefined elements for missing arguments');
     test.done();
   },
   confirmResponseWithMoreArgs: function(test)
