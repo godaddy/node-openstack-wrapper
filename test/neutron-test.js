@@ -256,6 +256,20 @@ exports.listFloatingIps = {
     });
   },
 
+  confirmPortsOnSuccessWithOptions: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.listFloatingIps({}, function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
   confirmEmptyArrayOnInvalidJSONBody: function(test)
   {
     //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
@@ -467,6 +481,20 @@ exports.listPorts = {
     neutron.setRequest(mock_request);
 
     neutron.listPorts(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmPortsOnSuccessWithOptions: function(test)
+  {
+    //stub out a request obj with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    neutron.setRequest(mock_request);
+
+    neutron.listPorts({}, function(error, result){
       test.ifError(error, 'There should be no error');
       test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
       test.done();

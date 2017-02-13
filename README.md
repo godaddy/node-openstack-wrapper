@@ -187,6 +187,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
   * getFlavor(flavor_id, callback)
 * **Floating Ips**
   * listFloatingIps(callback)
+  * listFloatingIps(options, callback)
   * getFloatingIp(floating_ip_id, callback)
   * createFloatingIp(data_object, callback)
   * removeFloatingIp(floating_ip_id, callback)
@@ -242,6 +243,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * removeFloatingIp(ip_id, callback(error))
 * **Ports**
 * listPorts(callback(error, array))
+* listPorts(options, callback(error, array))
 * getPort(port_id, callback(error, obj))
 * updatePort(port_id, data_object, callback(error, obj))
 * **Security Groups**
