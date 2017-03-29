@@ -36,7 +36,10 @@ exports.getRequestOptions = {
       uri: 'http://mock_neutron_url/mock_path',
       headers:{'X-Auth-Token': 'mock_token'},
       json: {meh: 'meh'},
-      timeout: 9000
+      timeout: 9000,
+      metricRequestID: '',
+      metricUserName: '',
+      metricLogger: null
     };
 
     test.deepEqual(result, expected_result, 'result should be ' + JSON.stringify(expected_result));
@@ -68,38 +71,11 @@ exports.listNetworks = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+
+  confirmErrorOnError: function(test)
   {
-    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listNetworks(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listNetworks(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
-    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listNetworks(function(error, result){
@@ -133,34 +109,10 @@ exports.getNetwork = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.getNetwork('id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmEmptyErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getNetwork('id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
-    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getNetwork('id', function(error, result){
@@ -169,7 +121,6 @@ exports.getNetwork = {
     });
   }
 };
-
 
 
 
@@ -195,36 +146,12 @@ exports.createFloatingIp = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.createFloatingIp('mock_network_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createFloatingIp('mock_network_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.createFloatingIp('mock_network_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
@@ -270,38 +197,11 @@ exports.listFloatingIps = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+
+  confirmErrorOnError: function(test)
   {
-    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listFloatingIps(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listFloatingIps(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
-    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listFloatingIps(function(error, result){
@@ -335,34 +235,10 @@ exports.getFloatingIp = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.getFloatingIp('id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmEmptyErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getFloatingIp('id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
-    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getFloatingIp('id', function(error, result){
@@ -396,42 +272,19 @@ exports.updateFloatingIp = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updateFloatingIp('mock_id', 'mock_port_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
 
 
 exports.removeFloatingIp = {
@@ -451,10 +304,10 @@ exports.removeFloatingIp = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeFloatingIp('mock_id', function(error){
@@ -501,38 +354,11 @@ exports.listPorts = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+ 
+  confirmErrorOnError: function(test)
   {
-    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listPorts(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listPorts(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
-    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listPorts(function(error, result){
@@ -566,36 +392,12 @@ exports.updatePort = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updatePort('mock_id', {name: 'mock_name'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
@@ -627,38 +429,10 @@ exports.listSecurityGroups = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request obj with an invalid json response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listSecurityGroups('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request obj with an invalid text response - shouldn't trigger an error but instead give back a blank array
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listSecurityGroups('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'value should be an array');
-      test.equal(result.length, 0, 'value should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request obj with an invalid status but a valid json body (to ensure invalid status triggers error)
-    var mock_request = getMockRequest(null, 500, this.valid_respone_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listSecurityGroups('mock_id', function(error, result){
@@ -692,34 +466,10 @@ exports.getSecurityGroup = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.getSecurityGroup('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getSecurityGroup('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getSecurityGroup('mock_id', function(error, result){
@@ -753,36 +503,12 @@ exports.createSecurityGroup = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.createSecurityGroup('mock_name', {description: 'mock_description'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
@@ -814,34 +540,10 @@ exports.updateSecurityGroup = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.updateSecurityGroup('mock_id', {name: 'mock-name'}, function(error, result){
@@ -870,10 +572,10 @@ exports.removeSecurityGroup = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeSecurityGroup('mock_id', function(error){
@@ -906,39 +608,11 @@ exports.listSecurityGroupRules = {
       test.done();
     });
   },
-
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listSecurityGroupRules(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.equal(result.length, 0, 'result should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listSecurityGroupRules(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.deepEqual(result, [], 'result should be a blank array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listSecurityGroupRules(function(error, rules_array){
@@ -972,38 +646,14 @@ exports.getSecurityGroupRule = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getSecurityGroupRule('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getSecurityGroupRule('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getSecurityGroupRule('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
       test.done();
     });
   }
@@ -1034,33 +684,10 @@ exports.createSecurityGroupRule = {
   },
 
   //stub out a request with a valid status but an invalid json response body
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.createSecurityGroupRule('mock_id', {name: 'mock_name', description: 'mock_description'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createSecurityGroupRule('mock_id', {name: 'mock_name', description: 'mock_description'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.createSecurityGroupRule('mock_id', {name: 'mock_name', description: 'mock_description'}, function(error, result){
@@ -1090,10 +717,10 @@ exports.removeSecurityGroupRule = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeSecurityGroupRule('mock_id', function(error){
@@ -1127,38 +754,10 @@ exports.listLoadBalancers = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listLoadBalancers(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.equal(result.length, 0, 'result should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listLoadBalancers(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.deepEqual(result, [], 'result should be a blank array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listLoadBalancers(function(error, rules_array){
@@ -1192,38 +791,14 @@ exports.getLoadBalancers = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getLoadBalancer('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getLoadBalancer('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLoadBalancer('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
       test.done();
     });
   }
@@ -1253,33 +828,10 @@ exports.createLoadBalancer = {
   },
 
   //stub out a request with a valid status but an invalid json response body
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.createLoadBalancer('tenant_id', 'vip_subnet_id', {name: 'mock_name'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createLoadBalancer('tenant_id', 'vip_subnet_id', {name: 'mock_name'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.createLoadBalancer('tenant_id', 'vip_subnet_id', {name: 'mock_name'}, function(error, result){
@@ -1311,36 +863,12 @@ exports.updateLoadBalancer = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
@@ -1365,10 +893,10 @@ exports.removeLoadBalancer = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeLoadBalancer('mock_id', function(error){
@@ -1401,38 +929,14 @@ exports.getLBStats = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getLBStats('lb_id', function(error, result){
       test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getLBStats('lb_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLBStats('lb_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
       test.done();
     });
   }
@@ -1460,39 +964,11 @@ exports.listLBListeners = {
       test.done();
     });
   },
-
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listLBListeners(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.equal(result.length, 0, 'result should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listLBListeners(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.deepEqual(result, [], 'result should be a blank array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listLBListeners(function(error, rules_array){
@@ -1525,38 +1001,14 @@ exports.getLBListener = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getLBListener('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getLBListener('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLBListener('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
       test.done();
     });
   }
@@ -1586,41 +1038,20 @@ exports.createLBListener = {
   },
 
   //stub out a request with a valid status but an invalid json response body
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
-
-    neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
+    
     neutron.createLBListener('tenant_id', 'loadbalancer_id', 'description', 'protocol', {protocol_port: 'mock_protocol_port'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.updateLBListener = {
   setUp: function(cb){
@@ -1644,42 +1075,20 @@ exports.updateLBListener = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updateLBListener('mock_id', {description: 'Updated Listener'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.removeLBListener = {
   setUp: function(cb){
@@ -1698,10 +1107,10 @@ exports.removeLBListener = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeLBListener('mock_id', function(error){
@@ -1710,6 +1119,7 @@ exports.removeLBListener = {
     });
   }
 };
+
 
 
 exports.listLBPools = {
@@ -1734,38 +1144,10 @@ exports.listLBPools = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listLBPools(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.equal(result.length, 0, 'result should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listLBPools(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.deepEqual(result, [], 'result should be a blank array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listLBPools(function(error, rules_array){
@@ -1776,11 +1158,12 @@ exports.listLBPools = {
 };
 
 
+
 exports.getLBPool = {
   setUp: function(cb){
     this.valid_response_body = {pool: {id: 'mock_id'}};
     this.valid_result = {id: 'mock_id'};
-
+    
     cb();
   },
 
@@ -1798,42 +1181,19 @@ exports.getLBPool = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getLBPool('mock_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getLBPool('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLBPool('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
   }
 };
+
 
 
 exports.createLBPool = {
@@ -1858,42 +1218,20 @@ exports.createLBPool = {
     });
   },
 
-  //stub out a request with a valid status but an invalid json response body
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
-
-    neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
+  
     neutron.createLBPool('tenant_id', 'protocol', 'lb_algorithm', 'listener_id', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.updateLBPool = {
   setUp: function(cb){
@@ -1917,42 +1255,20 @@ exports.updateLBPool = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updateLBPool('mock_id', {description: 'Updated LBPool'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateLBPool('mock_id', {description: 'Updated LBPool'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updateLBPool('mock_id', {description: 'Updated LBPool'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.removeLBPool = {
   setUp: function(cb){
@@ -1971,10 +1287,10 @@ exports.removeLBPool = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeLBPool('mock_id', function(error){
@@ -1983,6 +1299,7 @@ exports.removeLBPool = {
     });
   }
 };
+
 
 
 exports.listLBPoolMembers = {
@@ -2007,38 +1324,10 @@ exports.listLBPoolMembers = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listLBPoolMembers('pool_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.equal(result.length, 0, 'result should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listLBPoolMembers('pool_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.deepEqual(result, [], 'result should be a blank array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listLBPoolMembers('pool_id', function(error, rules_array){
@@ -2047,6 +1336,7 @@ exports.listLBPoolMembers = {
     });
   }
 };
+
 
 
 exports.getLBPoolMember = {
@@ -2071,38 +1361,14 @@ exports.getLBPoolMember = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
       test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLBPoolMember('pool_id', 'member_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
       test.done();
     });
   }
@@ -2131,34 +1397,10 @@ exports.createLBPoolMember= {
     });
   },
 
-  //stub out a request with a valid status but an invalid json response body
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.createLBPoolMember('pool_id', 'tenant_id', 'address', 'protocol_port', {'admin_state_up': 'mock_admin_state_up'}, function(error, result){
@@ -2167,6 +1409,8 @@ exports.createLBPoolMember= {
     });
   }
 };
+
+
 
 exports.updateLBPoolMember = {
   setUp: function(cb){
@@ -2190,42 +1434,20 @@ exports.updateLBPoolMember = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updateLBPoolMember('pool_id', 'member_id', {description: 'Updated LBPool'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.removeLBPoolMember = {
   setUp: function(cb){
@@ -2244,10 +1466,10 @@ exports.removeLBPoolMember = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeLBPoolMember('pool_id', 'member_id', function(error){
@@ -2282,38 +1504,10 @@ exports.listLBHealthMonitors = {
     });
   },
 
-  confirmEmptyArrayOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.listLBHealthMonitors(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.equal(result.length, 0, 'result should be an empty array');
-      test.done();
-    });
-  },
-
-  confirmEmptyArrayOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.listLBHealthMonitors(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(util.isArray(result), true, 'result should be an array');
-      test.deepEqual(result, [], 'result should be a blank array');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.listLBHealthMonitors(function(error, rules_array){
@@ -2322,6 +1516,7 @@ exports.listLBHealthMonitors = {
     });
   }
 };
+
 
 
 exports.getLBHealthMonitor = {
@@ -2346,42 +1541,19 @@ exports.getLBHealthMonitor = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid status but an invalid json response body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLBHealthMonitor('health_monitor_id', function(error, result){
-      test.ok(error, 'We should receive an error object or string');
-      test.done();
-    });
   }
 };
+
 
 
 exports.createLBHealthMonitor= {
@@ -2406,34 +1578,10 @@ exports.createLBHealthMonitor= {
     });
   },
 
-  //stub out a request with a valid status but an invalid json response body
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
-    neutron.setRequest(mock_request);
-
-    neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid status but invalid text body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnNon200: function(test)
-  {
-    //mock out a request with an invalid status but a valid response body to ensure the status triggers an error
-    var mock_request = getMockRequest(null, 500, this.valid_response_body);
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.createLBHealthMonitor('tenant_id', 'type', 'delay', 'timeout', 'max_retries', 'pool_id', {'http_method': 'mock_http_method'}, function(error, result){
@@ -2442,6 +1590,8 @@ exports.createLBHealthMonitor= {
     });
   }
 };
+
+
 
 exports.updateLBHealthMonitor = {
   setUp: function(cb){
@@ -2465,42 +1615,20 @@ exports.updateLBHealthMonitor = {
     });
   },
 
-  confirmErrorOnInvalidJSONBody: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response status but invalid response json body
-    var mock_request = getMockRequest(null, 200, {meh:'meh'});
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
-    neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out a request with a valid response status but a junk text response body
-    var mock_request = getMockRequest(null, 200, 'meh');
-    neutron.setRequest(mock_request);
-
-    neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  },
-
-  confirmErrorOnInvalidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 500, 'Our server just borked');
-    neutron.setRequest(mock_request);
-
-    //stub out a request with an invalid status but a completely valid response body to test that invalid status triggers an error
     neutron.updateLBHealthMonitor('health_monitor_id', {delay: 'mock_delay'}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.removeLBHealthMonitor = {
   setUp: function(cb){
@@ -2519,10 +1647,10 @@ exports.removeLBHealthMonitor = {
     });
   },
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
-    //stub out a request with a valid response body but invalid status to make sure the status triggers an error
-    var mock_request = getMockRequest(null, 500, '');
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
     neutron.setRequest(mock_request);
 
     neutron.removeLBHealthMonitor('health_monitor_id', function(error){
