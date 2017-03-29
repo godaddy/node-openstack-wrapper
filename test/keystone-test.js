@@ -34,7 +34,10 @@ exports.getRequestOptions = {
       uri: 'http://mock_keystone_url/mock_path',
       headers:{'X-Auth-Token': 'mock_token'},
       json: {meh: 'meh'},
-      timeout: 9000
+      timeout: 9000,
+      metricRequestID: '',
+      metricUserName: '',
+      metricLogger: null
     };
 
     test.deepEqual(result, expected_result, 'result should be ' + JSON.stringify(expected_result));
@@ -69,37 +72,10 @@ exports.getToken = {
     });
   },
 
-
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for an 200 response with junk json in the body
-    var mock_request = getMockRequest(null, 200, this.valid_response_headers, {meh: 'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.getToken('username', 'password', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for an 200 response with junk text in the body
-    var mock_request = getMockRequest(null, 200, this.valid_response_headers, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.getToken('username', 'password', function(error, result){
-      test.ok(error, "We should receive an error object or string");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an automagic 500 with junk text in the body
-    var mock_request = getMockRequest(null, 500, this.valid_response_headers, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, this.valid_response_headers, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.getToken('username', 'password', function(error, result){
@@ -136,50 +112,10 @@ exports.getProjectToken = {
     });
   },
 
-
-  confirmErrorOnInvalidHeader: function(test)
-  {
-    //stub out the request for a 200 with a valid body but missing the header info
-    var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
-    keystone.setRequest(mock_request);
-
-    keystone.getProjectToken("access_token", "project_id", function(error, project_info){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for a 200 response with a valid header but invalid json in the body
-    var mock_request = getMockRequest(null, 200, this.valid_response_headers, {meh:'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.getProjectToken("access_token", "project_id", function(error, project_info){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for a 200 response with a valid header but junk text in the body
-    var mock_request = getMockRequest(null, 200, this.valid_response_headers, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.getProjectToken("access_token", "project_id", function(error, project_info){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for a 500 with a valid header/body (worst case scenario)
-    var mock_request = getMockRequest(null, 500, this.valid_response_headers, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, this.valid_response_headers, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.getProjectToken("access_token", "project_id", function(error, project_info){
@@ -219,37 +155,10 @@ exports.listProjects = {
     });
   },
 
-
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for an 200 response with invalid json in the body
-    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.listProjects('accesstoken', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for a 200 response with an invalid text body
-    var mock_request = getMockRequest(null, 200, {}, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.listProjects('accesstoken', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for a 500 with a valid body (worst case scenario)
-    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.listProjects('accesstoken', function(error, result){
@@ -287,38 +196,12 @@ exports.listUserProjects = {
       test.done();
     });
   },
+  
 
-
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for an 200 response with invalid json in the body
-    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.listUserProjects('username', 'accesstoken', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for a 200 response with an invalid text body
-    var mock_request = getMockRequest(null, 200, {}, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.listUserProjects('username', 'accesstoken', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for a 500 with a valid body (worst case scenario)
-    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.listUserProjects('username', 'accesstoken', function(error, result){
@@ -352,37 +235,12 @@ exports.getProjectByName = {
       test.done();
     });
   },
-  
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for an 200 response with invalid json in the body
-    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
 
 
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for a 200 response with an invalid text body
-    var mock_request = getMockRequest(null, 200, {}, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for a 500 with a valid body (worst case scenario)
-    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.getProjectByName('accesstoken', 'project_name', function(error, result){
@@ -421,36 +279,10 @@ exports.listRoles = {
   },
 
 
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for a 200 response with invalid json in the body
-    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.listRoles('accesstoken', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for an 200 response with text in the body
-    var mock_request = getMockRequest(null, 200, {}, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.listRoles('accesstoken', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request with an invalid status but a valid body/header
-    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.listRoles('accesstoken', function(error, result){
@@ -490,36 +322,10 @@ exports.listRoleAssignments = {
   },
 
 
-  confirmErrorOnInvalidJSONBody: function(test)
-  {
-    //stub out the request for a 200 but with junk json in the body
-    var mock_request = getMockRequest(null, 200, {}, {meh:'meh'});
-    keystone.setRequest(mock_request);
-
-    keystone.listRoleAssignments('accesstoken', 'project_id', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnInvalidStringBody: function(test)
-  {
-    //stub out the request for a 200 response but with text in the body
-    var mock_request = getMockRequest(null, 200, {}, 'meh');
-    keystone.setRequest(mock_request);
-
-    keystone.listRoleAssignments('accesstoken', 'project_id', function(error, result){
-      test.ok(error, "We should receive an error object");
-      test.done();
-    });
-  },
-
-
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status but with a valid body
-    var mock_request = getMockRequest(null, 500, {}, this.valid_response_body);
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, this.valid_response_body);
     keystone.setRequest(mock_request);
 
     keystone.listRoleAssignments('accesstoken', 'project_id', function(error, result){
@@ -537,7 +343,7 @@ exports.addRoleAssignment = {
   },
 
 
-  confirmNoErrorOnSuccess: function(test)
+  confirmObjectOnSuccess: function(test)
   {
     //stub out a rquest with a valid result
     var mock_request = getMockRequest(null, 200, {}, {});
@@ -550,10 +356,10 @@ exports.addRoleAssignment = {
   },
 
 
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status
-    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
     keystone.addRoleAssignment('accesstoken', 'project_id', 'entry_id', 'user', 'role_id', function(error){
@@ -584,10 +390,10 @@ exports.removeRoleAssignment = {
   },
 
 
-  confirmErrorOnInvalidStatus: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status
-    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
     keystone.removeRoleAssignment('accesstoken', 'project_id', 'entry_id', 'user', 'role_id', function(error){
@@ -605,7 +411,7 @@ exports.listMetaEnvironments = {
   },
 
 
-  confirmNoErrorOnSuccess: function(test)
+  confirmObjectsOnSuccess: function(test)
   {
     //stub out a rquest with a valid result
     var self = this;
@@ -620,10 +426,10 @@ exports.listMetaEnvironments = {
   },
 
 
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status
-    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
     keystone.listMetaEnvironments('accesstoken', function(error, result){
@@ -641,7 +447,7 @@ exports.listMetaOwningGroups = {
   },
 
 
-  confirmNoErrorOnSuccess: function(test)
+  confirmObjetsOnSuccess: function(test)
   {
     //stub out a rquest with a valid result
     var self = this;
@@ -656,10 +462,10 @@ exports.listMetaOwningGroups = {
   },
 
 
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status
-    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
     keystone.listMetaOwningGroups('accesstoken', function(error, result){
@@ -677,7 +483,7 @@ exports.listProjectMeta = {
   },
 
 
-  confirmNoErrorOnSuccess: function(test)
+  confirmObjectsOnSuccess: function(test)
   {
     //stub out a rquest with a valid result
     var self = this;
@@ -692,10 +498,10 @@ exports.listProjectMeta = {
   },
 
 
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status
-    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
     keystone.listProjectMeta('accesstoken', 'project_id', function(error, result){
@@ -713,7 +519,7 @@ exports.updateProjectMeta = {
   },
 
 
-  confirmNoErrorOnSuccess: function(test)
+  confirmObjectOnSuccess: function(test)
   {
     //stub out a rquest with a valid result
     var self = this;
@@ -728,10 +534,10 @@ exports.updateProjectMeta = {
   },
 
 
-  confirmErrorOnNon200: function(test)
+  confirmErrorOnError: function(test)
   {
     //stub out request for an invalid status
-    var mock_request = getMockRequest(null, 500, {}, 'Our server just borked');
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, 'Our server just borked');
     keystone.setRequest(mock_request);
 
     keystone.updateProjectMeta('accesstoken', 'project_id', {environment: 'ENV', owning_grouop: 'GROUPID'}, function(error, result){

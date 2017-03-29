@@ -144,7 +144,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 ### Keystone (aka Identity)
 * new Keystone(v3_public_url)
 * setTimeout(timeout_milliseconds)
-* setRequest(request_lib)
+* setLogger(logger_obj)
 * setMangler(mangler_lib)
 * getToken(username, password, callback)
 * getProjectTokenById(generic_token_value, project_id, callback)
@@ -160,7 +160,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 ### Nova (aka Compute)
 * new Nova(v2_public_url, project_token_value)
 * setTimeout(timeout_milliseconds)
-* setRequest(request_lib)
+* setLogger(logger_obj)
 * setMangler(mangler_lib)
 * **Servers**
   * listServers(callback)
@@ -215,7 +215,6 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 ### Glance (aka Image)
 * new Glance(v2_public_url, project_token_value)
 * setTimeout(timeout_milliseconds)
-* setRequest(request_lib)
 * setMangler(mangler_lib)
 * listImages(callback)
 * getImage(image_id, callback)
@@ -227,7 +226,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 ### Neutron (aka Network)
 * new Neutron(v2_public_url)
 * setTimeout(timeout_milliseconds)
-* setRequest(request_lib)
+* setLogger(logger_obj)
 * setMangler(mangler_lib)
 * **Networks**
 * listNetworks(callback(error, array))
@@ -257,23 +256,6 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * listSecurityGroupRules(callback(error, array))
 * getSecurityGroupRule(rule_id, callback(error, obj))
 
-### Errors
-
-* **OpenStackError** -- All other errors extend this, so you can check instanceof OpenStackError
-##### Note: As of version 1.4.0 this is depreciated, and will be removed in 1.5.X
-	* BadRequestError (400)
-	* InvalidStateError (400)
-	* NotLoggedInError (401)
-	* ForbiddenError (403)
-	* NotFoundError (404)
-	* BadMethodError (405)
-	* LimitExceededError (413)
-	* BadMediaError (415)
-	* ValidationError (422)
-	* GenericError (500)
-	* NotImplementedError (501)
-	* UnavailableError (503)
-
 
 ## Running Tests
 
@@ -286,6 +268,12 @@ npm test
 ```
 
 ## Change Log
+### 2.0.0
+
+* Added support for a logger object instead of replacing entire request object to faciliate remote call logging.
+* Removed multiple error types.  All methods now return a general error with a 'detail' property containing call details if a call was made
+* Removed global timeout feature (too confusing when that was/wasn't in play)
+
 ### 1.4.0
 	
 * Removed usage of OpenStackErrors. Specifically removed all references of isError() & getError() in favor of: isRequestError() & getRequestError().
