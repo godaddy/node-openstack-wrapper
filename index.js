@@ -1,6 +1,7 @@
 var Keystone = require('./lib/keystone');
 var Glance = require('./lib/glance');
 var Neutron = require('./lib/neutron');
+var Octavia = require('./lib/octavia');
 var Nova = require('./lib/nova');
 
 //A convenience method for quick/dirty work for those that already have a project_id
@@ -88,6 +89,7 @@ module.exports = {
   Glance: Glance,
   Keystone: Keystone,
   Neutron: Neutron,
+  Octavia: Octavia,
   Nova: Nova,
   getSimpleProject: getSimpleProject
 }
