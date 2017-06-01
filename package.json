@@ -41,7 +41,8 @@
     "async": "~1"
   },
   "devDependencies": {
-    "nodeunit": "~0.9"
+    "nodeunit": "~0.9",
+    "rewire": "~2.5"
   },
   "main": "./index.js",
   "scripts": {
