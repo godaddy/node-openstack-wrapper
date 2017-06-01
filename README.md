@@ -310,7 +310,7 @@ npm test
 ### 2.1.0
 
 * Added Octavia calls for LoadBalancers, Listeners, Pools, HealthChecks, and Members
-* Mangling is now Depricated and not available in any new methods (like the Octavia ones) because 1-way mangling was a bad idea 2-way is better implemented in-app
+* Mangling is now Deprecated and not available in any new methods (like the Octavia ones) because 1-way mangling was a bad idea 2-way is better implemented in-app
 
 ### 2.0.0
 
