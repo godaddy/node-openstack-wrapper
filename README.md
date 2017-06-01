@@ -145,7 +145,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * new Keystone(v3_public_url)
 * setTimeout(timeout_milliseconds)
 * setLogger(logger_obj)
-* setMangler(mangler_lib)
+* setMangler(mangler_lib) --DEPRECATED
 * getToken(username, password, callback)
 * getProjectTokenById(generic_token_value, project_id, callback)
 * getProjectTokenByName(generic_token_value, domain_id, project_name, callback)
@@ -161,7 +161,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * new Nova(v2_public_url, project_token_value)
 * setTimeout(timeout_milliseconds)
 * setLogger(logger_obj)
-* setMangler(mangler_lib)
+* setMangler(mangler_lib) --DEPRECATED
 * **Servers**
   * listServers(callback)
   * getServer(server_id, callback)
@@ -215,7 +215,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 ### Glance (aka Image)
 * new Glance(v2_public_url, project_token_value)
 * setTimeout(timeout_milliseconds)
-* setMangler(mangler_lib)
+* setMangler(mangler_lib) --DEPRECATED
 * listImages(callback)
 * getImage(image_id, callback)
 * queueImage(data_object, callback)
@@ -227,7 +227,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * new Neutron(v2_public_url, project_token_value)
 * setTimeout(timeout_milliseconds)
 * setLogger(logger_obj)
-* setMangler(mangler_lib)
+* setMangler(mangler_lib) --DEPRECATED
 * **Networks**
   * listNetworks(callback(error, array))
   * getNetwork(network_id, callback(error, obj))
@@ -264,7 +264,6 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * setLogger(logger_obj)
 * setRetries(retries_on_locked)
 * setRetryDelay(delay_milliseconds)
-* setMangler(mangle_lib)
 * **Load Balancers**
   * createLoadBalancer(project_id, options_obj, cb(error, result_obj))
   * listLoadBalancers(cb(error, result_array))
