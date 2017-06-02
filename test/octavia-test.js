@@ -203,7 +203,7 @@ exports.updateLoadBalancer = {
 
 
 
-/*exports.removeLoadBalancer = {
+exports.removeLoadBalancer = {
   setUp: function(cb){
     cb();
   },
@@ -228,7 +228,7 @@ exports.updateLoadBalancer = {
   {
     var mock_request = {
       del: function(options, cb){
-        cb(new Error('mock', null, null);
+        cb(new Error('mock'), null, null);
       }
     };
     Octavia.__set__('Request', mock_request);
