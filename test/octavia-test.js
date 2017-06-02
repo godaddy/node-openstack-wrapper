@@ -78,9 +78,6 @@ exports.getLoadBalancers = {
 
   confirmLoadBalancerOnSuccess: function(test)
   {
-    this.valid_response_body = {loadbalancer: {id: 'mock_id'}};
-    this.valid_result = {id: 'mock_id'};
-
     var valid_response_body = {loadbalancer: {id: 'mock_id'}};
     var expected_result = {id: 'mock_id'};
     var mock_request = {
@@ -116,90 +113,112 @@ exports.getLoadBalancers = {
   }
 };
 
-/*
+
+
 exports.createLoadBalancer = {
   setUp: function(cb){
-    this.valid_response_body = {loadbalancer: {id: 'mock_id'}};
-    this.valid_result = {id: 'mock_id'};
-
     cb();
   },
 
   confirmValidResultOnSuccess: function(test)
   {
-    //stub out a completely valid request
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.createLoadBalancer('tenant_id', 'vip_subnet_id', {name: 'mock_name'}, function(error, result){
+    var valid_response_body = {loadbalancer: {id: 'mock_id'}};
+    var valid_result = {id: 'mock_id'};
+    var mock_request = {
+      post: function(options, cb){
+        cb(null, {}, valid_response_body);
+      }
+    };
+    Octavia.__set__('Request', mock_request);
+    
+    var octavia = new Octavia('http://mock_url', 'mock_token');
+    octavia.createLoadBalancer('mock_project_id', {}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.deepEqual(result, valid_result, 'result should be ' + JSON.stringify(valid_result));
       test.done();
     });
   },
 
-  //stub out a request with a valid status but an invalid json response body
   confirmErrorOnError: function(test)
   {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    neutron.setRequest(mock_request);
-
-    neutron.createLoadBalancer('tenant_id', 'vip_subnet_id', {name: 'mock_name'}, function(error, result){
+    var mock_request = {
+      post: function(options, cb){
+        cb(new Error('mock'), {}, null);
+      }
+    };
+    Octavia.__set__('Request', mock_request);
+    
+    var octavia = new Octavia('http://mock_url', 'mock_token');
+    octavia.createLoadBalancer('mock_project_id', {}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
+
+
 
 exports.updateLoadBalancer = {
   setUp: function(cb){
-    this.valid_response_body = {loadbalancer: {id: 'mock_id'}};
-    this.valid_result = {id: 'mock_id'};
-
     cb();
   },
 
   confirmValidResultOnSuccess: function(test)
   {
-    //stub out a request obj with a completely valid response
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    neutron.setRequest(mock_request);
+    var valid_response_body = {loadbalancer: {id: 'mock_id'}};
+    var valid_result = {id: 'mock_id'};
 
-    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
+    var mock_request = {
+      put: function(options, cb){
+        cb(null, {}, valid_response_body);
+      }
+    };
+    Octavia.__set__('Request', mock_request);
+    
+    var octavia = new Octavia('http://mock_url', 'mock_token');
+    octavia.updateLoadBalancer('mock_id', {}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.deepEqual(result, valid_result, 'result should be ' + JSON.stringify(valid_result));
       test.done();
     });
   },
 
   confirmErrorOnError: function(test)
   {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    neutron.setRequest(mock_request);
-
-    neutron.updateLoadBalancer('mock_id', {description: 'Updated LB'}, function(error, result){
+     var mock_request = {
+      put: function(options, cb){
+        cb(new Error('mock'), null, null);
+      }
+    };
+    
+    Octavia.__set__('Request', mock_request);
+    var octavia = new Octavia('http://mock_url', 'mock_token');
+    
+    octavia.updateLoadBalancer('mock_id', {}, function(error, result){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
   }
 };
 
-exports.removeLoadBalancer = {
+
+
+/*exports.removeLoadBalancer = {
   setUp: function(cb){
     cb();
   },
 
   confirmNoErrorOnSuccess: function(test)
   {
-    //stub out a completely valid response
-    var mock_request = getMockRequest(null, 200, '');
-    neutron.setRequest(mock_request);
-
-    neutron.removeLoadBalancer('mock_id', function(error){
+    var mock_request = {
+      del: function(options, cb){
+        cb(null, {}, {});
+      }
+    };
+    Octavia.__set__('Request', mock_request);
+    
+    var octavia = new Octavia('http://mock_url', 'mock_token');
+    octavia.removeLoadBalancer('mock_id', function(error){
       test.ifError(error, 'There should be no error');
       test.done();
     });
@@ -207,11 +226,15 @@ exports.removeLoadBalancer = {
 
   confirmErrorOnError: function(test)
   {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    neutron.setRequest(mock_request);
-
-    neutron.removeLoadBalancer('mock_id', function(error){
+    var mock_request = {
+      del: function(options, cb){
+        cb(new Error('mock', null, null);
+      }
+    };
+    Octavia.__set__('Request', mock_request);
+    
+    var octavia = new Octavia('http://mock_url', 'mock_token');
+    octavia.removeLoadBalancer('mock_id', function(error){
       test.ok(error, 'We should receive an error object');
       test.done();
     });
@@ -219,43 +242,8 @@ exports.removeLoadBalancer = {
 };
 
 
-exports.getLBStats = {
-  setUp: function(cb){
-    this.valid_response_body = {stats: {id: 'mock_id'}};
-    this.valid_result = {id: 'mock_id'};
 
-    cb();
-  },
-
-  confirmValidResultOnSuccess: function(test)
-  {
-    //stub out a completely valid request
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    neutron.setRequest(mock_request);
-
-    neutron.getLBStats('lb_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
-
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    neutron.setRequest(mock_request);
-
-    neutron.getLBStats('lb_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
-};
-
-
-exports.listLBListeners = {
+/*exports.listLBListeners = {
   setUp: function(cb){
     this.valid_response_body = {listeners: [{id: 'mock_id'}, {id: 'mock_id2'}]};
     this.valid_result = [{id: 'mock_id'}, {id: 'mock_id2'}];
