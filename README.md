@@ -91,7 +91,7 @@ keystone.getProjectToken('general_token_value', 'project_id', function(error, pr
 var OSWrap = require('openstack-wrapper');
 var nova = new OSWrap.Nova('nova_endpoint_url', 'project_token_value');
 
-nova.listServers(function(error, servers_array){
+nova.listServers('',function(error, servers_array){
   if(error)
   {
     console.error('an error occured', error);
@@ -124,7 +124,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
     console.log('A Simple Project Object was retrieved', project);
 
     //to use the project object:
-    project.nova.listServers(function(error, servers_array){
+    project.nova.listServers('changes-since=2017-07-25T09:50:10.814Z',function(error, servers_array){
       if(error)
       {
         console.error('An error occured', error);
@@ -163,7 +163,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * setLogger(logger_obj)
 * setMangler(mangler_lib) --DEPRECATED
 * **Servers**
-  * listServers(callback)
+  * listServers(params, callback)
   * getServer(server_id, callback)
   * createServer(data_object, callback)
   * renameServer(server_id, new_name_string, callback)
@@ -307,6 +307,10 @@ npm test
 ```
 
 ## Change Log
+### 2.2.0
+* Nova list server method is updated, now will accept params as the first argument
+* Nova create mulptiple server method added  #Issue 20
+
 ### 2.1.0
 
 * Added Octavia calls for LoadBalancers, Listeners, Pools, HealthChecks, and Members

@@ -57,7 +57,7 @@ exports.listServers = {
     var mock_request = getMockRequest(null, 200, {servers:[{status: 'ACTIVE'}]});
     nova.setRequest(mock_request);
 
-    nova.listServers(function(error, result){
+    nova.listServers('',function(error, result){
       test.ifError(error, 'There should be no error');
       test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
       test.done();
@@ -70,7 +70,7 @@ exports.listServers = {
     var mock_request = getMockRequest(new Error('meh'), 500, {});
     nova.setRequest(mock_request);
 
-    nova.listServers(function(error, result){
+    nova.listServers('',function(error, result){
       test.ok(error, 'There should be an error object');
       test.done();
     });
@@ -133,6 +133,31 @@ exports.createServer = {
   }
 };
 
+exports.createMultipleServer = {
+  confirmObjectOnSuccess: function(test)
+  {
+    var mock_request = getMockRequest(null, 200, {reservation_id : '123'});
+    nova.setRequest(mock_request);
+
+    nova.createMultipleServer('mock_id', function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.equal(result.reservation_id, '123', 'value should be "123"');
+      test.done();
+    });
+  },
+
+  confirmErrorOnError: function(test)
+  {
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
+    nova.setRequest(mock_request);
+
+    nova.createMultipleServer('mock_id', function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
 
 
 exports.renameServer = {
