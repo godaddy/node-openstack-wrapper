@@ -156,6 +156,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * listRoleAssignments(project_token_value, project_id, callback)
 * addRoleAssignment(project_token_value, project_id, entry_id, entry_type, role_id, callback)
 * removeRoleAssignment(project_token_value, project_id, entry_id, entry_type, role_id, callback)
+* listRegions(generic_token_value, callback)
 
 ### Nova (aka Compute)
 * new Nova(v2_public_url, project_token_value)
