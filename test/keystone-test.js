@@ -404,6 +404,66 @@ exports.removeRoleAssignment = {
 };
 
 
+exports.listRegions = {
+  setUp: function(cb){
+    //we'll need these a few times so...
+    this.valid_response_body = {links: {self: 'selfurl', previous: null, next: null},
+        regions: [
+            {
+                "description": "",
+                "id": "RegionOne",
+                "links": {
+                    "self": "selfurl"
+                },
+                "parent_region_id": null
+            }
+        ]};
+    this.valid_result = [
+        {
+            "description": "",
+            "id": "RegionOne",
+            "links": {
+                "self": "selfurl"
+            },
+            "parent_region_id": null
+        }
+    ];
+    this.valid_result.self = 'selfurl';
+    this.valid_result.previous = null;
+    this.valid_result.next = null;
+
+    cb();
+  },
+
+
+  confirmRegionsOnSuccess: function(test)
+  {
+    //stub out request with a completely valid response
+    var self = this;
+    var mock_request = getMockRequest(null, 200, {}, this.valid_response_body);
+    keystone.setRequest(mock_request);
+
+    keystone.listRegions('accesstoken', function(error, result){
+      test.ifError(error, 'There should be no error')
+      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+
+  confirmErrorOnError: function(test)
+  {
+    //stub out request for a 500 with a valid body (worst case scenario)
+    var mock_request = getMockRequest(new Error('meh'), 500, {}, this.valid_response_body);
+    keystone.setRequest(mock_request);
+
+    keystone.listRegions('accesstoken', function(error, result){
+      test.ok(error, "We should receive an error object");
+      test.done();
+    });
+  }
+};
+
+
 exports.listMetaEnvironments = {
   setUp: function(cb){
     this.valid_result = [{id: 'DEV', name: 'Development'}];
