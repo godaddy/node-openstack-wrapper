@@ -186,6 +186,8 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * **Flavors**
   * listFlavors(callback)
   * getFlavor(flavor_id, callback)
+* **Project Networks**
+  * listProjectNetworks(callback)
 * **Floating Ips**
   * listFloatingIps(callback)
   * listFloatingIps(options, callback)
