@@ -163,7 +163,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * setLogger(logger_obj)
 * setMangler(mangler_lib) --DEPRECATED
 * **Servers**
-  * listServers(callback)
+  * listServers([options], callback)
   * getServer(server_id, callback)
   * createServer(data_object, callback)
   * renameServer(server_id, new_name_string, callback)
@@ -307,6 +307,10 @@ npm test
 ```
 
 ## Change Log
+### 2.1.8
+
+* Added optional filtering on server listing calls
+
 ### 2.1.0
 
 * Added Octavia calls for LoadBalancers, Listeners, Pools, HealthChecks, and Members
