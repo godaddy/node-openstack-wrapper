@@ -146,7 +146,7 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * setTimeout(timeout_milliseconds)
 * setLogger(logger_obj)
 * setMangler(mangler_lib) --DEPRECATED
-* getToken(username, password, callback)
+* getToken(username, password, domain(optional), callback)
 * getProjectTokenById(generic_token_value, project_id, callback)
 * getProjectTokenByName(generic_token_value, domain_id, project_name, callback)
 * listProjects(project_token_value, callback) - token from any project w/admin privledges
