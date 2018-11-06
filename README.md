@@ -308,6 +308,10 @@ npm test
 ```
 
 ## Change Log
+### 2.1.11
+
+* Added region listing to keystone
+
 ### 2.1.8
 
 * Added optional filtering on server listing calls
