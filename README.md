@@ -186,6 +186,8 @@ OSWrap.getSimpleProject('username', 'password', 'project_id', 'keystone_url', fu
 * **Flavors**
   * listFlavors(callback)
   * getFlavor(flavor_id, callback)
+* **Project Networks**
+  * listProjectNetworks(callback)
 * **Floating Ips**
   * listFloatingIps(callback)
   * listFloatingIps(options, callback)
@@ -308,9 +310,13 @@ npm test
 ```
 
 ## Change Log
+### 2.1.12
+
+* Added Project Network Listing to Nova
+
 ### 2.1.11
 
-* Added region listing to keystone
+* Added region listing to Keystone
 
 ### 2.1.8
 

@@ -602,6 +602,64 @@ exports.getFlavor = {
 };
 
 
+exports.listProjectNetworks = {
+  setUp: function(cb)
+  {
+    this.valid_response_body = {
+      networks: [
+        {
+          "cidr": "10.0.0.0/29",
+          "id": "616fb98f-46ca-475e-917e-2563e5a8cd19",
+          "label": "test_0"
+        },
+        {
+          "cidr": "10.0.0.8/29",
+          "id": "616fb98f-46ca-475e-917e-2563e5a8cd20",
+          "label": "test_1"
+        }
+      ]
+    };
+    
+    this.valid_result = [
+      {
+          "cidr": "10.0.0.0/29",
+          "id": "616fb98f-46ca-475e-917e-2563e5a8cd19",
+          "label": "test_0"
+      },
+      {
+          "cidr": "10.0.0.8/29",
+          "id": "616fb98f-46ca-475e-917e-2563e5a8cd20",
+          "label": "test_1"
+      }
+    ];
+    
+    cb();
+  },
+  
+  confirmArrayValuesOnSuccess: function(test)
+  {
+    var self = this;
+    var mock_request = getMockRequest(null, 200, this.valid_response_body);
+    nova.setRequest(mock_request);
+    nova.listProjectNetworks(function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual(result, self.valid_result, 'value should match object: ' + JSON.stringify(self.valid_result));
+      test.done();
+    });
+  },
+  
+  confirmErrorOnError: function(test)
+  {
+    //stub out some junk with an error
+    var mock_request = getMockRequest(new Error('meh'), 500, {});
+    nova.setRequest(mock_request);
+     nova.listProjectNetworks(function(error, result){
+      test.ok(error, 'We should receive an error object');
+      test.done();
+    });
+  }
+};
+
 
 exports.floatinglistFloatingIpsip_list = {
   confirmArrayOnSuccess: function(test)
