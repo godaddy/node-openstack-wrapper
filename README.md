@@ -318,6 +318,10 @@ npm test
 ```
 
 ## Change Log
+### 2.2.0
+
+* Updated Nova.createServerImage to handle Nova 2.45+ format (new output format breaks backwards compat on this method so incrimented minor ver)
+
 ### 2.1.13
 
 * Added Heat object and methods

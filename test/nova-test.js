@@ -513,22 +513,38 @@ exports.getServerLog = {
 
 
 exports.createServerImage = {
-  confirmResponseOnSuccess: function(test)
+  confirmResponseOnSuccessOldNova: function(test)
   {
     var mock_request = {
       post: function(options_array, callback){
-        callback(null, {statusCode: 200, headers: {location: '/images/image_id'}}, {output: {result: 'result'}});
+        callback(null, {statusCode: 200, headers: {location: '/images/mock_id'}}, {output: {result: 'result'}});
       }
     };
     nova.setRequest(mock_request);
 
     nova.createServerImage('mock_id', {meh: 'meh'}, function(error, result){
       test.ifError(error, 'There should be no error');
-      test.deepEqual({result: 'result', ImageId: 'image_id'}, result, 'value should be {result: "result", ImageId: "image_id"}');
+      test.deepEqual({image_id: 'mock_id'}, result, 'value should be {image_id: "mock_id"}');
       test.done();
     });
   },
 
+  confirmResponseOnSuccessNewNova: function(test)
+  {
+    var mock_request = {
+      post: function(options_array, callback){
+        callback(null, {statusCode: 200}, {image_id: 'mock_id'});
+      }
+    };
+    nova.setRequest(mock_request);
+
+    nova.createServerImage('mock_id', {meh: 'meh'}, function(error, result){
+      test.ifError(error, 'There should be no error');
+      test.deepEqual({image_id: 'mock_id'}, result, 'value should be {image_id: "mock_id"}');
+      test.done();
+    });
+  },
+  
   confirmErrorOnError: function(test)
   {
     //stub out some junk with an error
