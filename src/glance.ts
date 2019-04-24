@@ -49,7 +49,17 @@ export default class Glance {
 		this.logger = logger;
 	}
 
+	public importImage(id: string, data: {
+		method: object;
+	}) {
+		const post_data = {
+			method: (data && data.method) || {}
+		};
 
+		const request_options = this.getRequestOptions('/images/' + escape(id) + '/import', post_data, 'remote-calls.glance.images.import', '', { 'Content-Type': 'application/json' });
+
+		return this.request.post(request_options);
+	}
 
 	// makes a callback cb(error, images_array) with a list of all of the available images for a given project/user
 	// NOTE: harding pagination for now - change at will (just be aware it will break backwards compat so update version accordingly)
