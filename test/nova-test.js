@@ -1,1317 +1,1229 @@
-var util = require('util');
-var Nova = require('../lib/nova.js');
-var nova = new Nova('mock_url', 'mock_token');
+const Nova = require('../dist/nova.js').default;
+const nova = new Nova('mock_url', 'mock_token');
 
 //returns a mock request object for dependency injection with the get method calling back with the given 3 values
-function getMockRequest(return_error, return_status_code, return_response)
-{
-  function mockVerb(options_array, callback)
-  {
-    callback(return_error, {statusCode: return_status_code}, return_response);
-  }
+function getMockRequest(return_error, return_status_code, return_response) {
+	function mockVerb(options_array) {
+		if (return_error) {
+			throw return_error;
+		} else {
+			return return_response;
+		}
+	}
 
-  var return_object = {
-    get:mockVerb,
-    post: mockVerb,
-    patch: mockVerb,
-    put: mockVerb,
-    del: mockVerb
-  };
+	function mockVerb2(options_array) {
+		if (return_error) {
+			throw return_error;
+		} else {
+			return {
+				res: {
+					statusCode: return_status_code,
+					headers: return_headers
+				},
+				body: return_response
+			};
+		}
+	}
 
-  return return_object;
+	const return_object = {
+		get: mockVerb,
+		post: mockVerb,
+		request: mockVerb2,
+		patch: mockVerb,
+		put: mockVerb,
+		del: mockVerb
+	};
+
+	return return_object;
 }
 
 
 
 exports.getRequestOptions = {
-  setUp: function(cb){
-    cb();
-  },
+	setUp(cb) {
+		cb();
+	},
 
-  confirmResult: function(test){
-    var result = nova.getRequestOptions('/mock_path', {meh: 'meh'});
-    var expected_result = {
-      uri: 'mock_url/mock_path',
-      headers:{'X-Auth-Token': 'mock_token'},
-      json: {meh: 'meh'},
-      timeout: 9000,
-      metricRequestID: '',
-      metricUserName: '',
-      metricLogger: null
-    };
+	confirmResult(test) {
+		const result = nova.getRequestOptions('/mock_path', { meh: 'meh' }, 'a', 'b', true);
+		const expected_result = {
+			uri: 'mock_url/mock_path',
+			headers: { 'X-Auth-Token': 'mock_token' },
+			json: { meh: 'meh' },
+			timeout: 9000,
+			metricPath: 'a',
+			metricRequestID: '',
+			metricUserName: '',
+			metricLogger: null,
+			requireBodyObject: 'b',
+			validateStatus: true
+		};
 
-    test.deepEqual(result, expected_result, 'result should be ' + JSON.stringify(expected_result));
-    test.done();
-  }
+		test.deepEqual(result, expected_result, 'result should be ' + JSON.stringify(expected_result));
+		test.done();
+	}
 };
 
 
 
 exports.listServers = {
-  setUp: function(callback){
-    callback();
-  },
+	setUp(callback) {
+		callback();
+	},
 
-  confirmArrayOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {servers:[{status: 'ACTIVE'}]});
-    nova.setRequest(mock_request);
+	async confirmArrayOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { servers: [{ status: 'ACTIVE' }] });
+		nova.setRequest(mock_request);
 
-    nova.listServers(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
-      test.done();
-    });
-  },
+		const result = await nova.listServers();
+		test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.listServers(function(error, result){
-      test.ok(error, 'There should be an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listServers();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getServer = {
-  confirmObjectOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {server:{status: 'ACTIVE'}});
-    nova.setRequest(mock_request);
+	async confirmObjectOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { server: { status: 'ACTIVE' } });
+		nova.setRequest(mock_request);
 
-    nova.getServer('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(result.status, 'ACTIVE', 'value should be "ACTIVE"');
-      test.done();
-    });
-  },
+		const result = await nova.getServer('mock_id');
+		test.equal(result.status, 'ACTIVE', 'value should be "ACTIVE"');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getServer('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.createServer = {
-  confirmObjectOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {server:{status: 'ACTIVE'}});
-    nova.setRequest(mock_request);
+	async confirmObjectOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { server: { status: 'ACTIVE' } });
+		nova.setRequest(mock_request);
 
-    nova.createServer('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(result.status, 'ACTIVE', 'value should be "ACTIVE"');
-      test.done();
-    });
-  },
+		const result = await nova.createServer('mock_id');
+		test.equal(result.status, 'ACTIVE', 'value should be "ACTIVE"');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.createServer('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.createServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.renameServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock_response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock_response');
+		nova.setRequest(mock_request);
 
-    nova.renameServer('mock_id', 'mock_name', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.renameServer('mock_id', 'mock_name');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.renameServer('mock_id', 'mock_name', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.renameServer('mock_id', 'mock_name');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.resizeServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock_response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock_response');
+		nova.setRequest(mock_request);
 
-    nova.resizeServer('mock_id', 'mock_flavor_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.resizeServer('mock_id', 'mock_flavor_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.resizeServer('mock_id', 'mock_flavor_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.resizeServer('mock_id', 'mock_flavor_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.confirmResizeServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock_response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock_response');
+		nova.setRequest(mock_request);
 
-    nova.confirmResizeServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.confirmResizeServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.confirmResizeServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.confirmResizeServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.revertResizeServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock_response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock_response');
+		nova.setRequest(mock_request);
 
-    nova.revertResizeServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.revertResizeServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.revertResizeServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.revertResizeServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.removeServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock response');
+		nova.setRequest(mock_request);
 
-    nova.removeServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.removeServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.removeServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.removeServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.rebootServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock response');
+		nova.setRequest(mock_request);
 
-    nova.rebootServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.rebootServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.rebootServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.rebootServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.forceRebootServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock response');
+		nova.setRequest(mock_request);
 
-    nova.forceRebootServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.forceRebootServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.forceRebootServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.forceRebootServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.stopServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock response');
+		nova.setRequest(mock_request);
 
-    nova.stopServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.stopServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.stopServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.stopServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.startServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, 'mock response');
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, 'mock response');
+		nova.setRequest(mock_request);
 
-    nova.startServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.startServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.startServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.startServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.pauseServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, { meh: 'meh' });
+		nova.setRequest(mock_request);
 
-    nova.pauseServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.pauseServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.pauseServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.pauseServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.suspendServer = {
-  confirmNoErrorOnValidStatus: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnValidStatus(test) {
+		const mock_request = getMockRequest(null, 200, { meh: 'meh' });
+		nova.setRequest(mock_request);
 
-    nova.suspendServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.suspendServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.suspendServer('mock_id', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.suspendServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.resumeServer = {
-  confirmNoErrorOnSuccess: function(test)
-  {
-    //can't use the normal getMockRequest here as there are actually 2 requests in this function
-    //first a get in getById then a post in the actual function
-    var mock_request = {
-      get: function(options_array, callback){
-        callback(null, {statusCode: 200}, {server: {status: 'PAUSED'}});
-      },
-      post: function(options_array, callback){
-        callback(null, {statusCode: 200}, {meh: 'meh'});
-      }
-    };
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnSuccess(test) {
+		//can't use the normal getMockRequest here as there are actually 2 requests in this function
+		//first a get in getById then a post in the actual function
+		const mock_request = {
+			get: function (options_array, callback) {
+				return { server: { status: 'PAUSED' } };
+			},
+			post: function (options_array, callback) {
+				return { meh: 'meh' };
+			}
+		};
+		nova.setRequest(mock_request);
 
-    nova.resumeServer('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.resumeServer('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.resumeServer('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.resumeServer('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getServerConsoleUrl = {
-  confirmURLOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {console: {url: 'http://something'}});
-    nova.setRequest(mock_request);
+	async confirmURLOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { console: { url: 'http://something' } });
+		nova.setRequest(mock_request);
 
-    nova.getServerConsoleURL('mock-type', 'mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(result, 'http://something', 'value should be boolean "http://something"');
-      test.done();
-    });
-  },
+		const result = await nova.getServerConsoleURL('mock-type', 'mock_id');
+		test.equal(result, 'http://something', 'value should be boolean "http://something"');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getServerConsoleURL('mock-type', 'mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getServerConsoleURL('mock-type', 'mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getServerLog = {
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
 
-    nova.getServerLog('mock_id', 50, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+		try {
+			await nova.getServerLog('mock_id', 50);
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.createServerImage = {
-  confirmResponseOnSuccessOldNova: function(test)
-  {
-    var mock_request = {
-      post: function(options_array, callback){
-        callback(null, {statusCode: 200, headers: {location: '/images/mock_id'}}, {output: {result: 'result'}});
-      }
-    };
-    nova.setRequest(mock_request);
+	async confirmResponseOnSuccessOldNova(test) {
+		const mock_request = {
+			request(options_array, callback) {
+				return {
+					res: { statusCode: 200, headers: { location: '/images/mock_id' } },
+					body: {
+						output: { result: 'result' }
+					}
+				};
+			}
+		};
+		nova.setRequest(mock_request);
 
-    nova.createServerImage('mock_id', {meh: 'meh'}, function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual({image_id: 'mock_id'}, result, 'value should be {image_id: "mock_id"}');
-      test.done();
-    });
-  },
+		const result = await nova.createServerImage('mock_id', { meh: 'meh' });
+		test.deepEqual({ image_id: 'mock_id' }, result, 'value should be {image_id: "mock_id"}');
+		test.done();
+	},
 
-  confirmResponseOnSuccessNewNova: function(test)
-  {
-    var mock_request = {
-      post: function(options_array, callback){
-        callback(null, {statusCode: 200}, {image_id: 'mock_id'});
-      }
-    };
-    nova.setRequest(mock_request);
+	async confirmResponseOnSuccessNewNova(test) {
+		const mock_request = {
+			request: function (options_array, callback) {
+				return {
+					body: {
+						image_id: 'mock_id'
+					}
+				};
+			}
+		};
+		nova.setRequest(mock_request);
 
-    nova.createServerImage('mock_id', {meh: 'meh'}, function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual({image_id: 'mock_id'}, result, 'value should be {image_id: "mock_id"}');
-      test.done();
-    });
-  },
-  
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+		const result = await nova.createServerImage('mock_id', { meh: 'meh' });
+		test.deepEqual({ image_id: 'mock_id' }, result, 'value should be {image_id: "mock_id"}');
+		test.done();
+	},
 
-    nova.createServerImage('mock_id', {meh: 'meh'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.createServerImage('mock_id', { meh: 'meh' });
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 //tests Nova.Instance.setMetadata()
 exports.setServerMetadata = {
-  confirmResponseOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {x:'x'});
-    nova.setRequest(mock_request);
+	async confirmResponseOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { x: 'x' });
+		nova.setRequest(mock_request);
 
-    nova.setServerMetadata('mock_id', {meh: 'meh'}, function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual({x:'x'}, result, 'value should be {x: "x"}');
-      test.done();
-    });
-  },
+		const result = await nova.setServerMetadata('mock_id', { meh: 'meh' });
+		test.deepEqual({ x: 'x' }, result, 'value should be {x: "x"}');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.setServerMetadata('mock_id', {meh: 'meh'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.setServerMetadata('mock_id', { meh: 'meh' });
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.listFlavors = {
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.listFlavors(function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listFlavors();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 exports.getFlavor = {
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
 
-    nova.getFlavor("id", function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+		try {
+			await nova.getFlavor("id");
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 exports.listProjectNetworks = {
-  setUp: function(cb)
-  {
-    this.valid_response_body = {
-      networks: [
-        {
-          "cidr": "10.0.0.0/29",
-          "id": "616fb98f-46ca-475e-917e-2563e5a8cd19",
-          "label": "test_0"
-        },
-        {
-          "cidr": "10.0.0.8/29",
-          "id": "616fb98f-46ca-475e-917e-2563e5a8cd20",
-          "label": "test_1"
-        }
-      ]
-    };
-    
-    this.valid_result = [
-      {
-          "cidr": "10.0.0.0/29",
-          "id": "616fb98f-46ca-475e-917e-2563e5a8cd19",
-          "label": "test_0"
-      },
-      {
-          "cidr": "10.0.0.8/29",
-          "id": "616fb98f-46ca-475e-917e-2563e5a8cd20",
-          "label": "test_1"
-      }
-    ];
-    
-    cb();
-  },
-  
-  confirmArrayValuesOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
-    nova.listProjectNetworks(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'value should match object: ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
-  
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-     nova.listProjectNetworks(function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	setUp(cb) {
+		this.valid_response_body = {
+			networks: [
+				{
+					"cidr": "10.0.0.0/29",
+					"id": "616fb98f-46ca-475e-917e-2563e5a8cd19",
+					"label": "test_0"
+				},
+				{
+					"cidr": "10.0.0.8/29",
+					"id": "616fb98f-46ca-475e-917e-2563e5a8cd20",
+					"label": "test_1"
+				}
+			]
+		};
+
+		this.valid_result = [
+			{
+				"cidr": "10.0.0.0/29",
+				"id": "616fb98f-46ca-475e-917e-2563e5a8cd19",
+				"label": "test_0"
+			},
+			{
+				"cidr": "10.0.0.8/29",
+				"id": "616fb98f-46ca-475e-917e-2563e5a8cd20",
+				"label": "test_1"
+			}
+		];
+
+		cb();
+	},
+
+	async confirmArrayValuesOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
+		const result = await nova.listProjectNetworks();
+		test.deepEqual(result, self.valid_result, 'value should match object: ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
+
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listProjectNetworks();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 exports.floatinglistFloatingIpsip_list = {
-  confirmArrayOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {floating_ips:[{status: 'ACTIVE'}]});
-    nova.setRequest(mock_request);
+	async confirmArrayOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { floating_ips: [{ status: 'ACTIVE' }] });
+		nova.setRequest(mock_request);
 
-    nova.listFloatingIps(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
-      test.done();
-    });
-  },
-  
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+		const result = await nova.listFloatingIps();
+		test.equal(result[0].status, 'ACTIVE', 'value should be "ACTIVE"');
+		test.done();
+	},
 
-    nova.listFloatingIps(function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listFloatingIps();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getFloatingIp = {
-  confirmObjectOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {floating_ip: {meh: 'meh'}});
-    nova.setRequest(mock_request);
-    
-    nova.getFloatingIp('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
-      test.done();
-    });
-  },
+	async confirmObjectOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { floating_ip: { meh: 'meh' } });
+		nova.setRequest(mock_request);
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+		const result = await nova.getFloatingIp('mock_id');
+		test.deepEqual(result, { meh: 'meh' }, 'value should be an object {meh: "meh"}');
+		test.done();
+	},
 
-    nova.getFloatingIp("id", function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getFloatingIp("id");
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.createFloatingIp = {
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.createFloatingIp({}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.createFloatingIp({});
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.removeFloatingIp = {
-  confirmNoErrorOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, true);
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, true);
+		nova.setRequest(mock_request);
 
-    nova.removeFloatingIp('mock_id', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.removeFloatingIp('mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.removeFloatingIp("id", function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.removeFloatingIp("id");
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.associateFloatingIp = {
-  confirmNoErrorOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 204, true);
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnSuccess(test) {
+		const mock_request = getMockRequest(null, 204, true);
+		nova.setRequest(mock_request);
 
-    nova.associateFloatingIp('mock_id', 'mock-address', function(error){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.associateFloatingIp('mock_id', 'mock-address');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.associateFloatingIp("mock_id", 'mock-address', function(error){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.associateFloatingIp("mock_id", 'mock-address');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.disassociateFloatingIp = {
-  confirmNoErrorOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 204, true);
-    nova.setRequest(mock_request);
+	async confirmNoErrorOnSuccess(test) {
+		const mock_request = getMockRequest(null, 204, true);
+		nova.setRequest(mock_request);
 
-    nova.disassociateFloatingIp('mock_id', 'mock-address', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.disassociateFloatingIp('mock_id', 'mock-address');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.disassociateFloatingIp("mock_id", 'mock-address', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.disassociateFloatingIp("mock_id", 'mock-address');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.listFloatingIpPools = {
-  setUp: function(cb){
-    this.valid_response_body = {floating_ip_pools: [{name: 'mock_id'}]};
-    this.valid_result = [{name: 'mock_id'}];
+	setUp(cb) {
+		this.valid_response_body = { floating_ip_pools: [{ name: 'mock_id' }] };
+		this.valid_result = [{ name: 'mock_id' }];
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmArrayOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmArrayOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.listFloatingIpPools(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.listFloatingIpPools();
+		test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.listFloatingIpPools(function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listFloatingIpPools();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getFloatingIpPool = {
-  setUp: function(cb){
-    //this function will actually call listIpPools so use a valid response body for that
-    this.valid_response_body = {floating_ip_pools: [{name: 'mock_id'}]};
-    //just need the individual matching object though for the valid result check
-    this.valid_result = {name: 'mock_id'};
+	setUp(cb) {
+		//this function will actually call listIpPools so use a valid response body for that
+		this.valid_response_body = { floating_ip_pools: [{ name: 'mock_id' }] };
+		//just need the individual matching object though for the valid result check
+		this.valid_result = { name: 'mock_id' };
 
-    cb();
-  },
+		cb();
+	},
 
 
-  confirmObjectOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmObjectOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.getFloatingIpPool('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.getFloatingIpPool('mock_id');
+		test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getFloatingIpPool("not-testid", function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getFloatingIpPool("not-testid");
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.listAvailabilityZones = {
-  setUp: function(cb){
-    this.valid_response_body = {availabilityZoneInfo:[{zoneName: 'mock_name1'}, {zoneName: 'mock_name2'}]};
-    this.valid_result = [{zoneName: 'mock_name1'}, {zoneName: 'mock_name2'}];
+	setUp(cb) {
+		this.valid_response_body = { availabilityZoneInfo: [{ zoneName: 'mock_name1' }, { zoneName: 'mock_name2' }] };
+		this.valid_result = [{ zoneName: 'mock_name1' }, { zoneName: 'mock_name2' }];
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmArrayValuesOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmArrayValuesOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.listAvailabilityZones(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'value should match object: ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.listAvailabilityZones();
+		test.deepEqual(result, self.valid_result, 'value should match object: ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.listAvailabilityZones(function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listAvailabilityZones();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getAvailabilityZone = {
-   setUp: function(cb){
-    this.valid_response_body = {availabilityZoneInfo:[{zoneName: 'mock_name'}, {zoneName: 'mock_name2'}]};
-    this.valid_result = {zoneName: 'mock_name'};
+	setUp(cb) {
+		this.valid_response_body = { availabilityZoneInfo: [{ zoneName: 'mock_name' }, { zoneName: 'mock_name2' }] };
+		this.valid_result = { zoneName: 'mock_name' };
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmObjectOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmObjectOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.getAvailabilityZone('mock_name', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'value should be an object: ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.getAvailabilityZone('mock_name');
+		test.deepEqual(result, self.valid_result, 'value should be an object: ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getAvailabilityZone("not-testname", function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getAvailabilityZone("not-testname");
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.listKeyPairs = {
-  setUp: function(cb){
-    this.valid_response_body = {keypairs:[{keypair: {name: 'mock_name'}}, {keypair: {name: 'mock_name2'}}]};
-    this.valid_result = [{name: 'mock_name'}, {name: 'mock_name2'}];
+	setUp(cb) {
+		this.valid_response_body = { keypairs: [{ keypair: { name: 'mock_name' } }, { keypair: { name: 'mock_name2' } }] };
+		this.valid_result = [{ name: 'mock_name' }, { name: 'mock_name2' }];
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmArrayValuesOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmArrayValuesOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.listKeyPairs(function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'value should match object: ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.listKeyPairs();
+		test.deepEqual(result, this.valid_result, 'value should match object: ' + JSON.stringify(this.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.listKeyPairs(function(error, result){
-      test.ok(error, 'Should be an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.listKeyPairs();
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getKeyPair = {
-  confirmObjectOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {keypair: {meh: 'meh'}});
-    nova.setRequest(mock_request);
+	async confirmObjectOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { keypair: { meh: 'meh' } });
+		nova.setRequest(mock_request);
 
-    nova.getKeyPair('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
-      test.done();
-    });
-  },
+		const result = await nova.getKeyPair('mock_id');
+		test.deepEqual(result, { meh: 'meh' }, 'value should be an object {meh: "meh"}');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getKeyPair('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getKeyPair('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.createKeyPair = {
-  confirmObjectOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {keypair: {meh: 'meh'}});
-    nova.setRequest(mock_request);
+	async confirmObjectOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { keypair: { meh: 'meh' } });
+		nova.setRequest(mock_request);
 
-    nova.createKeyPair('mock_name', 'mock-key', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, {meh: 'meh'}, 'value should be an object {meh: "meh"}');
-      test.done();
-    });
-  },
+		const result = await nova.createKeyPair('mock_name', 'mock-key');
+		test.deepEqual(result, { meh: 'meh' }, 'value should be an object {meh: "meh"}');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.createKeyPair('mock_name', 'mock-key', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.createKeyPair('mock_name', 'mock-key');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.removeKeyPair = {
-  confirmSuccessOn200: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {keypair: {meh: 'meh'}});
-    nova.setRequest(mock_request);
+	async confirmSuccessOn200(test) {
+		const mock_request = getMockRequest(null, 200, { keypair: { meh: 'meh' } });
+		nova.setRequest(mock_request);
 
-    nova.removeKeyPair('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      //I think thats all we can test for...
-      test.done();
-    });
-  },
+		await nova.removeKeyPair('mock_id');
+		//I think thats all we can test for...
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
 
-    nova.removeKeyPair('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+		try {
+			await nova.removeKeyPair('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getQuotaSet = {
-  setUp: function(cb){
-    this.valid_response_body = {quota_set: {ram: 1234}};
-    this.valid_result = {ram: 1234};
+	setUp(cb) {
+		this.valid_response_body = { quota_set: { ram: 1234 } };
+		this.valid_result = { ram: 1234 };
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmValueOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmValueOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.getQuotaSet('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error')
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.getQuotaSet('mock_id');
+		test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getQuotaSet('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getQuotaSet('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 
 exports.setQuotaSet = {
-  setUp: function(cb){
-    this.valid_response_body = {quota_set: {ram: 1234}};
-    this.valid_result = {ram: 1234};
+	setUp(cb) {
+		this.valid_response_body = { quota_set: { ram: 1234 } };
+		this.valid_result = { ram: 1234 };
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmValueOnSuccess: function(test)
-  {
-    var self = this;
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmValueOnSuccess(test) {
+		const self = this;
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.setQuotaSet('mock_id', {ram: 1234}, function(error, result){
-      test.ifError(error, 'There should be no error')
-      test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.setQuotaSet('mock_id', { ram: 1234 });
+		test.deepEqual(result, self.valid_result, 'result should be ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.setQuotaSet('mock_id', {}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.setQuotaSet('mock_id', {});
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 exports.getTenantUsage = {
-  setUp: function(cb){
-    this.valid_response_body = {tenant_usage: {total_hours: 3.14167}};
-    this.valid_result = {total_hours: 3.14167};
+	setUp(cb) {
+		this.valid_response_body = { tenant_usage: { total_hours: 3.14167 } };
+		this.valid_result = { total_hours: 3.14167 };
 
-    cb();
-  },
+		cb();
+	},
 
-  confirmTenantUsageOnSuccess: function(test)
-  {
-    var self = this;
-    var start_date = new Date();
-    var end_date = new Date();
-    var mock_request = getMockRequest(null, 200, this.valid_response_body);
-    nova.setRequest(mock_request);
+	async confirmTenantUsageOnSuccess(test) {
+		const self = this;
+		const start_date = new Date();
+		const end_date = new Date();
+		const mock_request = getMockRequest(null, 200, this.valid_response_body);
+		nova.setRequest(mock_request);
 
-    nova.getTenantUsage('mock_id', start_date, end_date, function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual(result, self.valid_result, 'value should be an object: ' +  JSON.stringify(self.valid_result));
-      test.done();
-    });
-  },
+		const result = await nova.getTenantUsage('mock_id', start_date, end_date);
+		test.deepEqual(result, self.valid_result, 'value should be an object: ' + JSON.stringify(self.valid_result));
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    var start_date = new Date();
-    var end_date = new Date();
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getTenantUsage('mock_id', start_date, end_date, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		const start_date = new Date();
+		const end_date = new Date();
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getTenantUsage('mock_id', start_date, end_date);
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.assignSecurityGroup = {
-  confirmNoErrorOn200: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
-    nova.setRequest(mock_request);
+	async confirmNoErrorOn200(test) {
+		const mock_request = getMockRequest(null, 200, { meh: 'meh' });
+		nova.setRequest(mock_request);
 
-    nova.assignSecurityGroup('mock_name', 'mock_id', function(error, response){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.assignSecurityGroup('mock_name', 'mock_id');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
 
-    nova.assignSecurityGroup('mock_name', 'mock_id', function(error, response){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+		try {
+			await nova.assignSecurityGroup('mock_name', 'mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.removeSecurityGroup = {
-  confirmValuesOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {meh: 'meh'});
-    nova.setRequest(mock_request);
+	async confirmValuesOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { meh: 'meh' });
+		nova.setRequest(mock_request);
 
-    nova.removeSecurityGroup('mock_name', 'mock_id', function(error, response){
-      test.ifError(error, 'There should be no error');
-      test.done();
-    });
-  },
+		await nova.removeSecurityGroup('mock_name', 'mock_id');
+		test.done();
+	},
 
-  confirmErrorOn5Error: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.removeSecurityGroup('mock_name', 'mock_id', function(error, response){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOn5Error(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.removeSecurityGroup('mock_name', 'mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.getImageMetaData = {
-  confirmResponseOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {metadata: {x:'x'}});
-    nova.setRequest(mock_request);
+	async confirmResponseOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { metadata: { x: 'x' } });
+		nova.setRequest(mock_request);
 
-    nova.getImageMetaData('mock_id', function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual({x:'x'}, result, 'value should be {x: "x"}');
-      test.done();
-    });
-  },
+		const result = await nova.getImageMetaData('mock_id');
+		test.deepEqual({ x: 'x' }, result, 'value should be {x: "x"}');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
-
-    nova.getImageMetaData('mock_id', function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
+		try {
+			await nova.getImageMetaData('mock_id');
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };
 
 
 
 exports.setImageMetadata = {
-  confirmResponseOnSuccess: function(test)
-  {
-    var mock_request = getMockRequest(null, 200, {metadata: {x:'x'}});
-    nova.setRequest(mock_request);
+	async confirmResponseOnSuccess(test) {
+		const mock_request = getMockRequest(null, 200, { metadata: { x: 'x' } });
+		nova.setRequest(mock_request);
 
-    nova.setImageMetaData('mock_id', {meh: 'meh'}, function(error, result){
-      test.ifError(error, 'There should be no error');
-      test.deepEqual({x:'x'}, result, 'value should be {x: "x"}');
-      test.done();
-    });
-  },
+		const result = await nova.setImageMetaData('mock_id', { meh: 'meh' });
+		test.deepEqual({ x: 'x' }, result, 'value should be {x: "x"}');
+		test.done();
+	},
 
-  confirmErrorOnError: function(test)
-  {
-    //stub out some junk with an error
-    var mock_request = getMockRequest(new Error('meh'), 500, {});
-    nova.setRequest(mock_request);
+	async confirmErrorOnError(test) {
+		//stub out some junk with an error
+		const mock_request = getMockRequest(new Error('meh'), 500, {});
+		nova.setRequest(mock_request);
 
-    nova.setImageMetaData('mock_id', {meh: 'meh'}, function(error, result){
-      test.ok(error, 'We should receive an error object');
-      test.done();
-    });
-  }
+		try {
+			await nova.setImageMetaData('mock_id', { meh: 'meh' });
+		} catch (error) {
+			test.ok(error, 'We should receive an error object');
+			test.done();
+		}
+	}
 };

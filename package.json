@@ -18,6 +18,10 @@
     {
       "name": "vincent99",
       "email": "vincent@rancher.com"
+    },
+    {
+      "name": "taoqf",
+      "email": "tao_qiufeng@126.com"
     }
   ],
   "license": "MIT",
@@ -37,16 +41,21 @@
     "url": "https://github.com/godaddy/node-openstack-wrapper.git"
   },
   "dependencies": {
-    "request": "~2",
-    "async": "~1"
+    "request": "~2"
   },
   "devDependencies": {
+    "@types/request": "^2.48.1",
     "nodeunit": "~0.9",
-    "rewire": "~2.5"
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.3"
   },
-  "main": "./index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "./node_modules/nodeunit/bin/nodeunit ./test"
+    "test": "nodeunit ./test",
+    "lint": "tslint --project ./tsconfig.json",
+    "build": "tsc",
+    "dev": "tsc -w"
   },
   "gitHead": "ba2e0d6bdd001448d030f25daf2a7578fc1036d2",
   "_id": "openstack-wrapper@1.4.6",
