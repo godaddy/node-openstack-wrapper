@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "request": "~2",
-    "async": "~1"
+    "async": "~3.2.2"
   },
   "devDependencies": {
     "nodeunit": "~0.9",
